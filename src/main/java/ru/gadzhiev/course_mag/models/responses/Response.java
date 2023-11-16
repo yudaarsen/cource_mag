@@ -14,6 +14,11 @@ public class Response {
     private final HttpStatus status;
     private final String message;
 
+    public Response() {
+        status = null;
+        message = "";
+    }
+
     public Response(final HttpStatus status) {
         this.status = status;
         this.message = "";
@@ -34,6 +39,6 @@ public class Response {
 
     @JsonProperty(value = "status", index = 1)
     public int getHttpCode() {
-        return status.value();
+        return status != null ? status.value() : 0;
     }
 }
