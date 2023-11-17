@@ -1,21 +1,23 @@
 package ru.gadzhiev.course_mag.controllers.catalogs;
 
 
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import jakarta.websocket.server.PathParam;
+import org.postgresql.util.PSQLException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.gadzhiev.course_mag.controllers.exceptions.RestApiException;
 import ru.gadzhiev.course_mag.models.Department;
 import ru.gadzhiev.course_mag.models.responses.Response;
-import ru.gadzhiev.course_mag.repositories.DepartmentRepository;
+import ru.gadzhiev.course_mag.services.DepartmentService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(
@@ -26,39 +28,71 @@ import ru.gadzhiev.course_mag.repositories.DepartmentRepository;
 @Validated
 public class DepartmentController {
 
+    private Logger logger = LoggerFactory.getLogger(DepartmentController.class);
+
     @Autowired
-    private DepartmentRepository departmentRepository;
+    private DepartmentService departmentService;
 
     @PostMapping(path = "/department")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public void postDepartment(@RequestBody @Valid final Department department) throws RestApiException {
-        if(!departmentRepository.createDepartment(department)) {
-            throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to create department");
+    public Department postDepartment(@RequestBody @Valid final Department department) throws RestApiException {
+        try {
+            Department createdDepartment = departmentService.create(department);
+            logger.debug("New department is created: " + createdDepartment);
+            return createdDepartment;
+        } catch (Exception e) {
+            if(e.getCause() instanceof PSQLException) {
+                if(((PSQLException)e.getCause()).getSQLState().equals("23505")) {
+                    logger.warn("Department name already exists: " + department.name());
+                    throw new RestApiException(HttpStatus.CONFLICT, "Department name already exists");
+                }
+            }
+            logger.error("Error while creating department", e);
+            throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while creating department");
         }
     }
 
     @PatchMapping(path = "/department/{id}")
-    public Response patchDepartment(@PathVariable("id") @NotNull @Min(1) int id, @RequestBody final Department department) {
-        return new Response(HttpStatus.CREATED);
+    @ResponseStatus(code = HttpStatus.OK)
+    public Department patchDepartment(@PathVariable("id") @NotNull @Min(1) int id, @RequestBody @Valid Department department) throws RestApiException {
+        try {
+            Department updatedDepartment = departmentService.update(new Department(id, department.name()));
+            logger.debug("Department is updated: " + updatedDepartment);
+            return updatedDepartment;
+        } catch (Exception e) {
+            if(e instanceof IllegalArgumentException) {
+                logger.warn(e.getMessage());
+                throw new RestApiException(HttpStatus.NO_CONTENT, "");
+            }
+            logger.error("Error while updating department", e);
+            throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while creating department");
+        }
     }
 
     @GetMapping(path = "/departments")
-    public Response getAllDepartments() {
-
-        return new Response(HttpStatus.CREATED);
-    }
-
-    @GetMapping(path = "/department/{id}")
-    public Response getDepartment(@PathVariable("id") @NotNull @Min(1) int id) {
-
-        return new Response(HttpStatus.CREATED);
+    @ResponseStatus(code = HttpStatus.OK)
+    public List<Department> getAllDepartments() throws RestApiException {
+        try {
+            return departmentService.findAll();
+        } catch (Exception e) {
+            logger.error("Error while updating department", e);
+            throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while creating department");
+        }
     }
 
     @DeleteMapping(path = "/department/{id}")
     @ResponseStatus(code = HttpStatus.OK)
-    public void deleteDepartment(@PathVariable("id") @NotNull @Min(1) int id) throws RestApiException {
-        if(!departmentRepository.deleteDepartment(id)) {
-            throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to delete department");
+    public void deleteDepartment(@PathVariable("id") @Min(1) int id) throws RestApiException {
+        try {
+            departmentService.delete(new Department(id, ""));
+            logger.debug("Department is deleted: " + id);
+        } catch (Exception e) {
+            if(e instanceof IllegalArgumentException) {
+                logger.warn(e.getMessage());
+                throw new RestApiException(HttpStatus.NO_CONTENT, "");
+            }
+            logger.error("Error while updating department", e);
+            throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while creating department");
         }
     }
 }
