@@ -1,6 +1,5 @@
 package ru.gadzhiev.course_mag.controllers.catalogs;
 
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -14,7 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.gadzhiev.course_mag.controllers.exceptions.RestApiException;
 import ru.gadzhiev.course_mag.models.Department;
-import ru.gadzhiev.course_mag.models.responses.Response;
+import ru.gadzhiev.course_mag.models.validations.FunctionValidation;
 import ru.gadzhiev.course_mag.services.DepartmentService;
 
 import java.util.List;
@@ -28,14 +27,14 @@ import java.util.List;
 @Validated
 public class DepartmentController {
 
-    private Logger logger = LoggerFactory.getLogger(DepartmentController.class);
+    private final Logger logger = LoggerFactory.getLogger(DepartmentController.class);
 
     @Autowired
     private DepartmentService departmentService;
 
     @PostMapping(path = "/department")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public Department postDepartment(@RequestBody @Valid final Department department) throws RestApiException {
+    public Department postDepartment(@RequestBody @Validated final Department department) throws RestApiException {
         try {
             Department createdDepartment = departmentService.create(department);
             logger.debug("New department is created: " + createdDepartment);
@@ -54,7 +53,7 @@ public class DepartmentController {
 
     @PatchMapping(path = "/department/{id}")
     @ResponseStatus(code = HttpStatus.OK)
-    public Department patchDepartment(@PathVariable("id") @NotNull @Min(1) int id, @RequestBody @Valid Department department) throws RestApiException {
+    public Department patchDepartment(@PathVariable("id") @NotNull @Min(1) int id, @RequestBody @Validated Department department) throws RestApiException {
         try {
             Department updatedDepartment = departmentService.update(new Department(id, department.name()));
             logger.debug("Department is updated: " + updatedDepartment);
