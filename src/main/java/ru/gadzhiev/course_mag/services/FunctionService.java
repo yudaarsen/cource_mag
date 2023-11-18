@@ -10,4 +10,5 @@ public interface FunctionService {
     Function update(final Function function) throws Exception;
     int delete(final Function function) throws Exception;
     List<Function> findAllForDepartment(final Department department) throws Exception;
+    Function findById(final Function function) throws Exception;
 }

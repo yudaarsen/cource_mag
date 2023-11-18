@@ -64,7 +64,7 @@ public class DepartmentController {
                 throw new RestApiException(HttpStatus.NO_CONTENT, "");
             }
             logger.error("Error while updating department", e);
-            throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while creating department");
+            throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while updating department");
         }
     }
 
@@ -75,7 +75,7 @@ public class DepartmentController {
             return departmentService.findAll();
         } catch (Exception e) {
             logger.error("Error while updating department", e);
-            throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while creating department");
+            throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while getting department");
         }
     }
 
@@ -90,8 +90,8 @@ public class DepartmentController {
                 logger.warn(e.getMessage());
                 throw new RestApiException(HttpStatus.NO_CONTENT, "");
             }
-            logger.error("Error while updating department", e);
-            throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while creating department");
+            logger.error("Error while deleting department", e);
+            throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while deleting department");
         }
     }
 }
