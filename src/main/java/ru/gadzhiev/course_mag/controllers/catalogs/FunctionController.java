@@ -55,7 +55,7 @@ public class FunctionController {
         }
     }
 
-    @PatchMapping(path = "/function/{id}")
+    @PutMapping(path = "/function/{id}")
     @ResponseStatus(code = HttpStatus.OK)
     public Function updateFunction(@PathVariable("id") @NotNull @Min(1) int id,
                                    @RequestBody @Validated final Function function) throws RestApiException {
@@ -81,11 +81,12 @@ public class FunctionController {
         try {
             functionService.delete(new Function(id, null, null));
             logger.debug("Function is deleted: " + id);
-        } catch (Exception e) {
-            if(e instanceof IllegalArgumentException) {
-                logger.debug(e.getMessage());
-                throw new RestApiException(HttpStatus.NO_CONTENT, "");
-            }
+        }
+        catch (IllegalArgumentException e) {
+            logger.debug(e.getMessage());
+            throw new RestApiException(HttpStatus.NO_CONTENT, "");
+        }
+        catch (Exception e) {
             logger.error("Error while deleting function", e);
             throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while deleting function");
         }

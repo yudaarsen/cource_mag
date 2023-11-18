@@ -51,18 +51,19 @@ public class DepartmentController {
         }
     }
 
-    @PatchMapping(path = "/department/{id}")
+    @PutMapping(path = "/department/{id}")
     @ResponseStatus(code = HttpStatus.OK)
     public Department patchDepartment(@PathVariable("id") @NotNull @Min(1) int id, @RequestBody @Validated Department department) throws RestApiException {
         try {
             Department updatedDepartment = departmentService.update(new Department(id, department.name()));
             logger.debug("Department is updated: " + updatedDepartment);
             return updatedDepartment;
-        } catch (Exception e) {
-            if(e instanceof IllegalArgumentException) {
-                logger.warn(e.getMessage());
-                throw new RestApiException(HttpStatus.NO_CONTENT, "");
-            }
+        }
+        catch (IllegalArgumentException e) {
+            logger.warn(e.getMessage());
+            throw new RestApiException(HttpStatus.NO_CONTENT, "");
+        }
+        catch (Exception e) {
             logger.error("Error while updating department", e);
             throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while updating department");
         }
@@ -85,11 +86,12 @@ public class DepartmentController {
         try {
             departmentService.delete(new Department(id, ""));
             logger.debug("Department is deleted: " + id);
-        } catch (Exception e) {
-            if(e instanceof IllegalArgumentException) {
-                logger.warn(e.getMessage());
-                throw new RestApiException(HttpStatus.NO_CONTENT, "");
-            }
+        }
+        catch (IllegalArgumentException e) {
+            logger.warn(e.getMessage());
+            throw new RestApiException(HttpStatus.NO_CONTENT, "");
+        }
+        catch (Exception e) {
             logger.error("Error while deleting department", e);
             throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while deleting department");
         }
