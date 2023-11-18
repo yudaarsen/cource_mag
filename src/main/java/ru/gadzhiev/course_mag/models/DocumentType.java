@@ -7,7 +7,7 @@ import ru.gadzhiev.course_mag.models.validations.DocumentTypeValidation;
 public record DocumentType (
     @NotNull(groups = { DocumentTypeValidation.class, Default.class })
     @NotBlank(groups = { DocumentTypeValidation.class, Default.class })
-    @Size(min = 1, max = 4, groups = { DocumentTypeValidation.class, Default.class })
+    @Size(min = 4, max = 4, groups = { DocumentTypeValidation.class, Default.class })
     String code,
     @NotNull(groups = { DocumentTypeValidation.class })
     @NotBlank(groups = { DocumentTypeValidation.class })

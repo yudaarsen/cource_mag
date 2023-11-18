@@ -53,7 +53,7 @@ public class DocumentController {
 
     @DeleteMapping(path = "/document_type/{id}")
     @ResponseStatus(code = HttpStatus.OK)
-    public void deleteDocumentType(@PathVariable("id") @Size(min = 1, max = 4) final String code) throws RestApiException {
+    public void deleteDocumentType(@PathVariable("id") @Size(min = 4, max = 4) final String code) throws RestApiException {
         try {
             documentService.delete(new DocumentType(code, null));
             logger.debug("Document type is deleted: " + code);
