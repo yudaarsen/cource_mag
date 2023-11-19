@@ -11,4 +11,6 @@ public interface AccountService {
     int delete(final Account account) throws Exception;
 
     List<Account> findAll() throws Exception;
+
+    Account findById(final Account account) throws Exception;
 }

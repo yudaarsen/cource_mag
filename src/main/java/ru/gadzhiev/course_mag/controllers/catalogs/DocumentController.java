@@ -1,6 +1,8 @@
 package ru.gadzhiev.course_mag.controllers.catalogs;
 
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.postgresql.util.PSQLException;
 import org.slf4j.Logger;
@@ -53,9 +55,9 @@ public class DocumentController {
 
     @DeleteMapping(path = "/document_type/{id}")
     @ResponseStatus(code = HttpStatus.OK)
-    public void deleteDocumentType(@PathVariable("id") @Size(min = 4, max = 4) final String code) throws RestApiException {
+    public void deleteDocumentType(@PathVariable("id") @Size(min = 4, max = 4) @NotBlank @NotNull final String code) throws RestApiException {
         try {
-            documentService.delete(new DocumentType(code, null));
+            documentService.delete(new DocumentType(code.toUpperCase(), null));
             logger.debug("Document type is deleted: " + code);
         } catch (IllegalArgumentException e) {
             logger.debug(e.getMessage());

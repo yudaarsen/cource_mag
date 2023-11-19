@@ -2,6 +2,8 @@ package ru.gadzhiev.course_mag.controllers.catalogs;
 
 
 import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.postgresql.util.PSQLException;
 import org.slf4j.Logger;
@@ -53,7 +55,7 @@ public class AccountController {
 
     @DeleteMapping(path = "/account/{code}")
     @ResponseStatus(code = HttpStatus.OK)
-    public void deleteAccount(@PathVariable("code") @Digits(integer = 10, fraction = 0) @Size(min = 10, max = 10) final String code) throws RestApiException {
+    public void deleteAccount(@PathVariable("code") @Digits(integer = 10, fraction = 0) @NotBlank @NotNull @Size(min = 10, max = 10) final String code) throws RestApiException {
         try {
             accountService.delete(new Account(code, null, null));
             logger.debug("Account is deleted: " + code);

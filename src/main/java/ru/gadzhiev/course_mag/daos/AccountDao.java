@@ -41,4 +41,7 @@ public interface AccountDao {
     @UseRowMapper(AccountRowMapper.class)
     List<Account> getAll();
 
+    @SqlQuery("SELECT * FROM account WHERE code = :code")
+    @UseRowMapper(AccountRowMapper.class)
+    Account findById(@BindMethods final Account account);
 }

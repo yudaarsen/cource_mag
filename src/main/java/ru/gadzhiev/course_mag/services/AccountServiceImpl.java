@@ -31,4 +31,9 @@ public class AccountServiceImpl implements AccountService {
     public List<Account> findAll() throws Exception {
         return jdbi.withExtension(AccountDao.class, AccountDao::getAll);
     }
+
+    @Override
+    public Account findById(Account account) throws Exception {
+        return jdbi.withExtension(AccountDao.class, extension -> extension.findById(account));
+    }
 }
