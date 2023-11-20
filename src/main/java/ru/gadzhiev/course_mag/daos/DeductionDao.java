@@ -8,6 +8,8 @@ import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import org.jdbi.v3.sqlobject.statement.UseRowMapper;
 import ru.gadzhiev.course_mag.models.Account;
 import ru.gadzhiev.course_mag.models.Deduction;
+import ru.gadzhiev.course_mag.models.Employee;
+import ru.gadzhiev.course_mag.models.EmployeeDeduction;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -38,4 +40,20 @@ public interface DeductionDao {
     @SqlQuery("SELECT * FROM deduction")
     @UseRowMapper(DeductionRowMapper.class)
     List<Deduction> getAll();
+
+    @SqlQuery("SELECT d.code, d.account_id, GREATEST(d.rate, ed.rate) AS rate FROM employee_deduction AS ed INNER JOIN deduction AS d ON ed.deduction_id = d.code " +
+            "WHERE ed.personnel_number = :employee.personnelNumber AND ed.deduction_id = UPPER(:deduction.code)")
+    @UseRowMapper(DeductionRowMapper.class)
+    Deduction getEmployeeDeduction(@BindMethods final EmployeeDeduction employeeDeduction);
+
+    @SqlUpdate("INSERT INTO employee_deduction VALUES (:employee.personnelNumber, UPPER(:deduction.code), :deduction.rate)")
+    int createEmployeeDeduction(@BindMethods final EmployeeDeduction employeeDeduction);
+
+    @SqlUpdate("DELETE FROM employee_deduction WHERE personnel_number = :employee.personnelNumber AND deduction_id = UPPER(:deduction.code)")
+    int deleteEmployeeDeduction(@BindMethods final EmployeeDeduction employeeDeduction);
+
+    @SqlQuery("SELECT d.code, d.account_id, GREATEST(d.rate, ed.rate) AS rate FROM employee_deduction AS ed INNER JOIN deduction AS d ON ed.deduction_id = d.code " +
+            "WHERE ed.personnel_number = :personnelNumber")
+    @UseRowMapper(DeductionRowMapper.class)
+    List<Deduction> getEmployeeDeductions(@BindMethods final Employee employee);
 }

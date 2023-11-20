@@ -1,6 +1,8 @@
 package ru.gadzhiev.course_mag.services;
 
+import ru.gadzhiev.course_mag.models.Deduction;
 import ru.gadzhiev.course_mag.models.Employee;
+import ru.gadzhiev.course_mag.models.EmployeeDeduction;
 
 import java.util.List;
 
@@ -16,4 +18,9 @@ public interface EmployeeService {
 
     Employee findById(final Employee employee) throws Exception;
 
+    Deduction addEmployeeDeduction(final EmployeeDeduction employeeDeduction) throws Exception;
+
+    int deleteEmployeeDeduction(final EmployeeDeduction employeeDeduction) throws Exception;
+
+    List<Deduction> findEmployeeDeductions(final Employee employee) throws Exception;
 }

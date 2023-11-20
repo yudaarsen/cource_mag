@@ -3,8 +3,11 @@ package ru.gadzhiev.course_mag.services;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.gadzhiev.course_mag.daos.DeductionDao;
 import ru.gadzhiev.course_mag.daos.EmployeeDao;
+import ru.gadzhiev.course_mag.models.Deduction;
 import ru.gadzhiev.course_mag.models.Employee;
+import ru.gadzhiev.course_mag.models.EmployeeDeduction;
 import ru.gadzhiev.course_mag.models.Function;
 
 import java.util.List;
@@ -19,7 +22,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private FunctionService functionService;
 
     @Override
-    public Employee create(Employee employee) throws Exception {
+    public Employee create(final Employee employee) throws Exception {
         Function function = functionService.findById(employee.function());
 
         if(function == null)
@@ -48,7 +51,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Employee update(Employee employee) throws Exception {
+    public Employee update(final Employee employee) throws Exception {
         Function function = functionService.findById(employee.function());
 
         if(function == null)
@@ -77,7 +80,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public int delete(Employee employee) throws Exception {
+    public int delete(final Employee employee) throws Exception {
         int result = jdbi.withExtension(EmployeeDao.class, extension -> extension.delete(employee));
         if(result > 0)
             return result;
@@ -90,10 +93,32 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Employee findById(Employee employee) throws Exception {
+    public Employee findById(final Employee employee) throws Exception {
         Employee result = jdbi.withExtension(EmployeeDao.class, extension -> extension.getById(employee));
         if(result == null)
             throw new IllegalArgumentException("Employee does not exist: " + employee.personnelNumber());
         return result;
+    }
+
+    @Override
+    public Deduction addEmployeeDeduction(final EmployeeDeduction employeeDeduction) throws Exception {
+        int result = jdbi.withExtension(DeductionDao.class, extension -> extension.createEmployeeDeduction(employeeDeduction));
+        if(result != 1)
+            throw new IllegalStateException("Error during creating employee deduction");
+        return jdbi.withExtension(DeductionDao.class, extension -> extension.getEmployeeDeduction(employeeDeduction));
+    }
+
+    @Override
+    public int deleteEmployeeDeduction(final EmployeeDeduction employeeDeduction) throws Exception {
+        int result = jdbi.withExtension(DeductionDao.class, extension -> extension.deleteEmployeeDeduction(employeeDeduction));
+        if(result > 0)
+            return result;
+        throw new IllegalArgumentException("Employee deduction does not exist: "
+                + employeeDeduction.employee().personnelNumber() + " " + employeeDeduction.deduction().code());
+    }
+
+    @Override
+    public List<Deduction> findEmployeeDeductions(final Employee employee) throws Exception {
+        return jdbi.withExtension(DeductionDao.class, extension -> extension.getEmployeeDeductions(employee));
     }
 }
