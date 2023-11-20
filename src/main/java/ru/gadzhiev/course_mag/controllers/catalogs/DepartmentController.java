@@ -92,6 +92,12 @@ public class DepartmentController {
             throw new RestApiException(HttpStatus.NO_CONTENT, "");
         }
         catch (Exception e) {
+            if(e.getCause() instanceof PSQLException) {
+                if(((PSQLException)e.getCause()).getSQLState().equals("23503")) {
+                    logger.warn("Department has references", e);
+                    throw new RestApiException(HttpStatus.BAD_REQUEST, "Department has references");
+                }
+            }
             logger.error("Error while deleting department", e);
             throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while deleting department");
         }

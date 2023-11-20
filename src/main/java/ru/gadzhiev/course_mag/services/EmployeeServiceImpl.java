@@ -5,10 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.gadzhiev.course_mag.daos.DeductionDao;
 import ru.gadzhiev.course_mag.daos.EmployeeDao;
-import ru.gadzhiev.course_mag.models.Deduction;
-import ru.gadzhiev.course_mag.models.Employee;
-import ru.gadzhiev.course_mag.models.EmployeeDeduction;
-import ru.gadzhiev.course_mag.models.Function;
+import ru.gadzhiev.course_mag.daos.TimesheetDao;
+import ru.gadzhiev.course_mag.models.*;
 
 import java.util.List;
 
@@ -120,5 +118,24 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<Deduction> findEmployeeDeductions(final Employee employee) throws Exception {
         return jdbi.withExtension(DeductionDao.class, extension -> extension.getEmployeeDeductions(employee));
+    }
+
+    @Override
+    public Timesheet createTimesheet(final Timesheet timesheet) throws Exception {
+        return jdbi.withExtension(TimesheetDao.class, extension -> extension.create(timesheet));
+    }
+
+    @Override
+    public int deleteTimesheet(final Timesheet timesheet) throws Exception {
+        int result = jdbi.withExtension(TimesheetDao.class, extension -> extension.delete(timesheet));
+        if(result > 0)
+            return result;
+        throw new IllegalArgumentException("Timesheet does not exist " + timesheet.employee().personnelNumber() + " " + timesheet.year()
+                    + " " + timesheet.month() + " " + timesheet.day());
+    }
+
+    @Override
+    public List<Timesheet> findEmployeeTimesheet(final Employee employee, final int year, final int month) throws Exception {
+        return jdbi.withExtension(TimesheetDao.class, extension -> extension.getEmployeeTimesheet(employee, year, month));
     }
 }

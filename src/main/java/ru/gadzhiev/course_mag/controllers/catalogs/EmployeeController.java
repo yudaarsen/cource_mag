@@ -1,9 +1,6 @@
 package ru.gadzhiev.course_mag.controllers.catalogs;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import org.postgresql.util.PSQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +13,7 @@ import ru.gadzhiev.course_mag.controllers.exceptions.RestApiException;
 import ru.gadzhiev.course_mag.models.Deduction;
 import ru.gadzhiev.course_mag.models.Employee;
 import ru.gadzhiev.course_mag.models.EmployeeDeduction;
+import ru.gadzhiev.course_mag.models.Timesheet;
 import ru.gadzhiev.course_mag.models.validations.EmployeeDeductionValidation;
 import ru.gadzhiev.course_mag.models.validations.EmployeeValidation;
 import ru.gadzhiev.course_mag.models.validations.EmployeeValidationUpdate;
@@ -222,6 +220,74 @@ public class EmployeeController {
         } catch (Exception e) {
             logger.error("Error while getting employee deduction", e);
             throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while getting employee deduction");
+        }
+    }
+
+    @PostMapping(path = "/employee/{id}/timesheet")
+    @ResponseStatus(code = HttpStatus.CREATED)
+    public Timesheet createTimesheet(@PathVariable("id") @Min(1) final int personnelNumber,
+            @RequestBody @Validated final Timesheet timesheet) throws RestApiException {
+        try {
+            Timesheet createdTimesheet = employeeService.createTimesheet(new Timesheet(
+                    new Employee(personnelNumber, null, null, null, null, null, null, 0),
+                    timesheet.year(),
+                    timesheet.month(),
+                    timesheet.day(),
+                    timesheet.present()
+            ));
+            logger.debug("Timesheet is created: " + personnelNumber + " " + createdTimesheet.year() + " " + createdTimesheet.month() + " "
+                    + createdTimesheet.day() + " " + createdTimesheet.present());
+            return createdTimesheet;
+        } catch (Exception e) {
+            if(e.getCause() instanceof PSQLException) {
+                if(((PSQLException)e.getCause()).getSQLState().equals("23503")) {
+                    logger.debug("Employee does not exist: " + personnelNumber);
+                    throw new RestApiException(HttpStatus.BAD_REQUEST, "Employee does not exist: " + personnelNumber);
+                }
+            }
+            logger.error("Error while creating timesheet", e);
+            throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while creating timesheet");
+        }
+    }
+
+    @DeleteMapping(path = "/employee/{id}/timesheet")
+    @ResponseStatus(code = HttpStatus.OK)
+    public void deleteTimesheet(@PathVariable("id") @Min(1) final int personnelNumber,
+                                @RequestBody @Validated final Timesheet timesheet) throws RestApiException {
+        try {
+            employeeService.deleteTimesheet(new Timesheet(
+                    new Employee(personnelNumber, null, null, null, null, null, null, 0),
+                    timesheet.year(),
+                    timesheet.month(),
+                    timesheet.day(),
+                    false
+            ));
+            logger.debug("Timesheet is deleted: " + + personnelNumber + " " + timesheet.year() + " " + timesheet.month() + " "
+                    + timesheet.day());
+        } catch (IllegalArgumentException e) {
+            logger.debug("Timesheet does not exist: " + personnelNumber + " " + timesheet.year() + " " + timesheet.month() + " "
+                    + timesheet.day());
+            throw new RestApiException(HttpStatus.NO_CONTENT, "");
+        } catch (Exception e) {
+            logger.error("Error while deleting timesheet", e);
+            throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while deleting timesheet");
+        }
+    }
+
+    @GetMapping(path = "/employee/{id}/timesheet")
+    @ResponseStatus(code = HttpStatus.OK)
+    public List<Timesheet> findEmployeeTimesheet(@PathVariable("id") @Min(1) final int personnelNumber,
+                                                 @RequestParam("year") @Min(1991) @Max(9999) final int year,
+                                                 @RequestParam("month") @Min(1) @Max(12) final int month) throws RestApiException {
+        try {
+            return employeeService.findEmployeeTimesheet(
+                    new Employee(personnelNumber, null, null, null, null, null, null, 0),
+                    year,
+                    month
+            );
+        } catch (Exception e) {
+            logger.error("Error while getting timesheet", e);
+            throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while getting timesheet");
         }
     }
 }

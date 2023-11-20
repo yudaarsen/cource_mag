@@ -87,6 +87,12 @@ public class FunctionController {
             throw new RestApiException(HttpStatus.NO_CONTENT, "");
         }
         catch (Exception e) {
+            if(e.getCause() instanceof PSQLException) {
+                if(((PSQLException)e.getCause()).getSQLState().equals("23503")) {
+                    logger.warn("Function has references", e);
+                    throw new RestApiException(HttpStatus.BAD_REQUEST, "Function has references");
+                }
+            }
             logger.error("Error while deleting function", e);
             throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while deleting function");
         }

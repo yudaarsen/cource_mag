@@ -3,6 +3,7 @@ package ru.gadzhiev.course_mag.services;
 import ru.gadzhiev.course_mag.models.Deduction;
 import ru.gadzhiev.course_mag.models.Employee;
 import ru.gadzhiev.course_mag.models.EmployeeDeduction;
+import ru.gadzhiev.course_mag.models.Timesheet;
 
 import java.util.List;
 
@@ -23,4 +24,10 @@ public interface EmployeeService {
     int deleteEmployeeDeduction(final EmployeeDeduction employeeDeduction) throws Exception;
 
     List<Deduction> findEmployeeDeductions(final Employee employee) throws Exception;
+
+    Timesheet createTimesheet(final Timesheet timesheet) throws Exception;
+
+    int deleteTimesheet(final Timesheet timesheet) throws Exception;
+
+    List<Timesheet> findEmployeeTimesheet(final Employee employee, final int year, final int month) throws Exception;
 }

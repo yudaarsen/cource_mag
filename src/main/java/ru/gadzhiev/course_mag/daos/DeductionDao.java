@@ -46,7 +46,8 @@ public interface DeductionDao {
     @UseRowMapper(DeductionRowMapper.class)
     Deduction getEmployeeDeduction(@BindMethods final EmployeeDeduction employeeDeduction);
 
-    @SqlUpdate("INSERT INTO employee_deduction VALUES (:employee.personnelNumber, UPPER(:deduction.code), :deduction.rate)")
+    @SqlUpdate("INSERT INTO employee_deduction VALUES (:employee.personnelNumber, UPPER(:deduction.code), :deduction.rate) " +
+            "ON CONFLICT (personnel_number, deduction_id) DO UPDATE SET rate = :deduction.rate")
     int createEmployeeDeduction(@BindMethods final EmployeeDeduction employeeDeduction);
 
     @SqlUpdate("DELETE FROM employee_deduction WHERE personnel_number = :employee.personnelNumber AND deduction_id = UPPER(:deduction.code)")
