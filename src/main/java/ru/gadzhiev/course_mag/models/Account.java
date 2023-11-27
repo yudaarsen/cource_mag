@@ -10,12 +10,13 @@ import jakarta.validation.groups.Default;
 import org.springframework.lang.Nullable;
 import ru.gadzhiev.course_mag.models.validations.AccountValidation;
 import ru.gadzhiev.course_mag.models.validations.DeductionValidation;
+import ru.gadzhiev.course_mag.models.validations.DocumentValidation;
 
 public record Account(
-        @NotNull(groups = { AccountValidation.class, Default.class, DeductionValidation.class })
-        @NotBlank(groups = { AccountValidation.class, Default.class, DeductionValidation.class })
-        @Digits(integer = 10, fraction = 0, groups = { AccountValidation.class, Default.class, DeductionValidation.class })
-        @Size(min = 10, max = 10, groups = { AccountValidation.class, Default.class, DeductionValidation.class})
+        @NotNull(groups = { AccountValidation.class, Default.class, DeductionValidation.class, DocumentValidation.class })
+        @NotBlank(groups = { AccountValidation.class, Default.class, DeductionValidation.class, DocumentValidation.class })
+        @Digits(integer = 10, fraction = 0, groups = { AccountValidation.class, Default.class, DeductionValidation.class, DocumentValidation.class })
+        @Size(min = 10, max = 10, groups = { AccountValidation.class, Default.class, DeductionValidation.class, DocumentValidation.class})
         String code,
         @NotNull
         @NotBlank
