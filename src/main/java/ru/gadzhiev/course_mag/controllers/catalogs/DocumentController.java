@@ -1,5 +1,6 @@
 package ru.gadzhiev.course_mag.controllers.catalogs;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -105,6 +106,17 @@ public class DocumentController {
             }
             logger.error("Error while creating document", e);
             throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while creating document");
+        }
+    }
+
+    @GetMapping(path = "/document/{id}")
+    @ResponseStatus(code = HttpStatus.OK)
+    public Document getDocumentById(@PathVariable("id") @Min(1) final int documentId) throws RestApiException {
+        try {
+            return documentService.findDocumentById(new Document(documentId, null, null, null, null));
+        } catch (Exception e) {
+            logger.error("Error while getting document", e);
+            throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while getting document");
         }
     }
 }
