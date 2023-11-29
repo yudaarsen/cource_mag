@@ -3,6 +3,7 @@ package ru.gadzhiev.course_mag.models;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.*;
 import jakarta.validation.groups.Default;
+import org.jdbi.v3.core.mapper.reflect.ColumnName;
 import ru.gadzhiev.course_mag.models.validations.DocumentTypeValidation;
 import ru.gadzhiev.course_mag.models.validations.DocumentValidation;
 

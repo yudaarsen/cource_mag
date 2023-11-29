@@ -23,6 +23,7 @@ public record Employee(
         @JsonInclude(JsonInclude.Include.NON_NULL)
         String lastName,
         @Size(max = 100, groups = { EmployeeValidationUpdate.class, EmployeeValidation.class, Default.class })
+        @Nullable
         @JsonInclude(JsonInclude.Include.NON_NULL)
         String middleName,
         @NotNull(groups = { EmployeeValidationUpdate.class, EmployeeValidation.class, Default.class })
@@ -31,12 +32,15 @@ public record Employee(
         @JsonInclude(JsonInclude.Include.NON_NULL)
         Function function,
         @Email(groups = { EmployeeValidationUpdate.class, EmployeeValidation.class, Default.class })
+        @Nullable
         @JsonInclude(JsonInclude.Include.NON_NULL)
         String email,
         @Size(max = 15, groups = { EmployeeValidationUpdate.class, EmployeeValidation.class, Default.class })
+        @Nullable
         @JsonInclude(JsonInclude.Include.NON_NULL)
         String phone,
         @Min(value = 1, groups = { EmployeeValidationUpdate.class, EmployeeValidation.class, Default.class })
+        @Nullable
         @JsonInclude(JsonInclude.Include.NON_DEFAULT)
         long salary
 )

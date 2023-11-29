@@ -18,7 +18,6 @@ import java.util.List;
 public interface EmployeeDao {
 
     class EmployeeRowMapper implements RowMapper<Employee> {
-
         @Override
         public Employee map(ResultSet rs, StatementContext ctx) throws SQLException {
             return new Employee(

@@ -9,6 +9,7 @@ import ru.gadzhiev.course_mag.daos.DocumentTypeDao;
 import ru.gadzhiev.course_mag.models.Document;
 import ru.gadzhiev.course_mag.models.DocumentPosition;
 import ru.gadzhiev.course_mag.models.DocumentType;
+import ru.gadzhiev.course_mag.models.Employee;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,16 +62,12 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public Document findDocumentById(final Document document) throws Exception {
-        return jdbi.inTransaction(handle -> {
-            Document foundDocument = handle.attach(DocumentDao.class).getById(document);
-            return new Document(
-                    foundDocument.id(),
-                    foundDocument.documentType(),
-                    foundDocument.postingDate(),
-                    foundDocument.note(),
-                    handle.attach(DocumentDao.class).getDocumentPositions(document)
-            );
-        });
+        return jdbi.withExtension(DocumentDao.class, extension -> extension.getById(document));
+    }
+
+    @Override
+    public List<Document> getDocuments() throws Exception {
+        return jdbi.withExtension(DocumentDao.class, DocumentDao::getDocuments);
     }
 
     private Document prepareDocument(final Document document) {

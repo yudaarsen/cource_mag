@@ -119,4 +119,15 @@ public class DocumentController {
             throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while getting document");
         }
     }
+
+    @GetMapping(path = "/documents")
+    @ResponseStatus(code = HttpStatus.OK)
+    public List<Document> getDocuments() throws RestApiException {
+        try {
+            return documentService.getDocuments();
+        } catch (Exception e) {
+            logger.error("Error while getting documents", e);
+            throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while getting documents");
+        }
+    }
 }

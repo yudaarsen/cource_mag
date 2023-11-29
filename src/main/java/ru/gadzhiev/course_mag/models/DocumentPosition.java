@@ -19,7 +19,6 @@ public record DocumentPosition(
         @Min(value = 1, groups = { DocumentValidation.class })
         long amount,
         @Valid
-        @JsonInclude(JsonInclude.Include.NON_NULL)
         Employee employee,
         @Size(max = 250, groups = { DocumentValidation.class })
         String note

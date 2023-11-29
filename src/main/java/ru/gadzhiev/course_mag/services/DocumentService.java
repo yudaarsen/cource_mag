@@ -13,5 +13,5 @@ public interface DocumentService {
     List<DocumentType> findAllDocumentTypes() throws Exception;
     Document createDocument(final Document document) throws Exception;
     Document findDocumentById(final Document document) throws Exception;
-
+    List<Document> getDocuments() throws Exception;
 }
