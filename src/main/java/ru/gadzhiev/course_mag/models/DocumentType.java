@@ -18,4 +18,7 @@ public record DocumentType (
     @JsonInclude(JsonInclude.Include.NON_NULL)
     String name
 )
-{}
+{
+    public static final String TYPE_REVERSE = "REVE";
+
+}

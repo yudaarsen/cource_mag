@@ -6,19 +6,13 @@ import org.jdbi.v3.core.result.RowView;
 import org.jdbi.v3.core.statement.StatementContext;
 import org.jdbi.v3.sqlobject.config.*;
 import org.jdbi.v3.sqlobject.customizer.BindMethods;
-import org.jdbi.v3.sqlobject.statement.SqlBatch;
-import org.jdbi.v3.sqlobject.statement.SqlQuery;
-import org.jdbi.v3.sqlobject.statement.UseRowMapper;
-import org.jdbi.v3.sqlobject.statement.UseRowReducer;
+import org.jdbi.v3.sqlobject.statement.*;
 import ru.gadzhiev.course_mag.Utils;
 import ru.gadzhiev.course_mag.models.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +29,10 @@ public interface DocumentDao {
                                 documentType,
                                 Utils.parseDate(rowView.getColumn("d_posting_date", String.class)),
                                 rowView.getColumn("d_note", String.class),
-                                new ArrayList<>());
+                                new ArrayList<>(),
+                                rowView.getColumn("d_reverse_document", Integer.class) == null
+                                        ? 0 : rowView.getColumn("d_reverse_document", Integer.class)
+                        );
                     });
 
             document.documentPositions().add(new DocumentPosition(
@@ -78,12 +75,13 @@ public interface DocumentDao {
                     ),
                     rs.getDate("posting_date"),
                     rs.getString("note"),
-                    null
+                    null,
+                    0
             );
         }
     }
 
-    @SqlQuery("INSERT INTO document VALUES (:id, UPPER(:documentType.code), :postingDate, :note) RETURNING *")
+    @SqlQuery("INSERT INTO document VALUES (:id, UPPER(:documentType.code), :postingDate, :note, :reverseDocument) RETURNING *")
     @UseRowMapper(DocumentRowMapper.class)
     Document create(@BindMethods final Document document);
 
@@ -95,6 +93,7 @@ public interface DocumentDao {
             SELECT d.id AS "d_id"
             , d.posting_date AS "d_posting_date"
             , d.note AS "d_note"
+            , d.reverse_document AS "d_reverse_document"
             , t.code AS "t_code"
             , t.name AS "t_name"
             , ds.pos_num AS "ds_pos_num"
@@ -131,6 +130,7 @@ public interface DocumentDao {
             SELECT d.id AS "d_id"
             , d.posting_date AS "d_posting_date"
             , d.note AS "d_note"
+            , d.reverse_document AS "d_reverse_document"
             , t.code AS "t_code"
             , t.name AS "t_name"
             , ds.pos_num AS "ds_pos_num"
@@ -158,4 +158,7 @@ public interface DocumentDao {
     @RegisterRowMapper(value = EmployeeNameRowMapper.class)
     @UseRowReducer(DocumentRowReducer.class)
     List<Document> getDocuments();
+
+    @SqlUpdate("UPDATE document SET reverse_document = :reverseDocument.id WHERE id = :document.id")
+    int reverseDocument(@BindMethods(value = "document") final Document document, @BindMethods(value = "reverseDocument") final Document reverseDocument);
 }

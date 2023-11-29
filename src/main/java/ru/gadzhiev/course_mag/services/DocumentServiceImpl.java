@@ -11,6 +11,7 @@ import ru.gadzhiev.course_mag.models.DocumentPosition;
 import ru.gadzhiev.course_mag.models.DocumentType;
 import ru.gadzhiev.course_mag.models.Employee;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +45,8 @@ public class DocumentServiceImpl implements DocumentService {
             throw new IllegalArgumentException("Illegal position type");
         if(!validateDocumentBalance(document))
             throw new IllegalArgumentException("Balance of document must be 0");
+        if(document.documentType().code().equals(DocumentType.TYPE_REVERSE))
+            throw new IllegalArgumentException("Document with this type cannot be created");
         Document createdDocument = jdbi.inTransaction(handle -> {
             int id = handle.attach(DocumentDao.class).getNextDocumentId();
             Document preparedDocument = prepareDocument(new Document (
@@ -51,7 +54,8 @@ public class DocumentServiceImpl implements DocumentService {
                 document.documentType(),
                 document.postingDate(),
                 document.note(),
-                document.documentPositions()
+                document.documentPositions(),
+                0
             ));
             Document transactionalDocument = handle.attach(DocumentDao.class).create(preparedDocument);
             handle.attach(DocumentDao.class).createPositions(preparedDocument.documentPositions());
@@ -68,6 +72,41 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     public List<Document> getDocuments() throws Exception {
         return jdbi.withExtension(DocumentDao.class, DocumentDao::getDocuments);
+    }
+
+    @Override
+    public Document reverseDocument(final Document document) throws Exception {
+        Document documentToReverse = findDocumentById(document);
+        if(documentToReverse == null)
+            throw new IllegalArgumentException("Document does not exist: " + document.id());
+        if(documentToReverse.documentType().code().equals(DocumentType.TYPE_REVERSE))
+            throw new IllegalArgumentException("Document with this type cannot be reversed: " + document.id());
+        if(documentToReverse.reverseDocument() > 0)
+            throw new IllegalArgumentException("Document is already reversed: " + document.id());
+        if(documentToReverse.postingDate().after(document.postingDate()))
+            throw new IllegalArgumentException("Illegal posting date: " + document.id());
+
+        Document reverseDocument = jdbi.inTransaction(handle -> {
+            int id = handle.attach(DocumentDao.class).getNextDocumentId();
+            Document preparedDocument = new Document(
+                    id,
+                    new DocumentType(
+                            DocumentType.TYPE_REVERSE,
+                            null
+                    ),
+                    document.postingDate(),
+                    "Документ сторно от " + new SimpleDateFormat("dd.MM.yyyy").format(document.postingDate()) +  " к документу №" + documentToReverse.id(),
+                    copyPositions(id, documentToReverse.documentPositions()),
+                    documentToReverse.id()
+            );
+            handle.attach(DocumentDao.class).create(preparedDocument);
+            handle.attach(DocumentDao.class).createPositions(preparedDocument.documentPositions());
+            handle.attach(DocumentDao.class).reverseDocument(documentToReverse,
+                    new Document(id, null, null, null, null, 0)
+            );
+            return handle.attach(DocumentDao.class).getById(preparedDocument);
+        });
+        return reverseDocument;
     }
 
     private Document prepareDocument(final Document document) {
@@ -90,7 +129,8 @@ public class DocumentServiceImpl implements DocumentService {
                 document.documentType(),
                 document.postingDate(),
                 document.note(),
-                preparedPositions
+                preparedPositions,
+                document.reverseDocument()
         );
     }
 
@@ -111,5 +151,21 @@ public class DocumentServiceImpl implements DocumentService {
                     : balance - documentPosition.amount();
         }
         return balance == 0;
+    }
+
+    private List<DocumentPosition> copyPositions(final int documentId, final List<DocumentPosition> positions) {
+        List<DocumentPosition> copiedPositions = new ArrayList<>();
+        for(DocumentPosition documentPosition : positions) {
+            copiedPositions.add(new DocumentPosition(
+                    documentId,
+                    documentPosition.posNum(),
+                    documentPosition.posType(),
+                    documentPosition.account(),
+                    documentPosition.amount(),
+                    documentPosition.employee(),
+                    documentPosition.note()
+            ));
+        }
+        return copiedPositions;
     }
 }

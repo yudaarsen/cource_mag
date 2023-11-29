@@ -20,6 +20,7 @@ public record Document(
         String note,
         @NotNull(groups = { DocumentValidation.class })
         @Valid
-        List<DocumentPosition> documentPositions
+        List<DocumentPosition> documentPositions,
+        int reverseDocument
 )
 {}

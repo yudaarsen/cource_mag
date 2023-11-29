@@ -8,6 +8,7 @@ import org.postgresql.util.PSQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -20,6 +21,7 @@ import ru.gadzhiev.course_mag.models.validations.DocumentValidation;
 import ru.gadzhiev.course_mag.services.DocumentService;
 
 import java.sql.BatchUpdateException;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -113,7 +115,14 @@ public class DocumentController {
     @ResponseStatus(code = HttpStatus.OK)
     public Document getDocumentById(@PathVariable("id") @Min(1) final int documentId) throws RestApiException {
         try {
-            return documentService.findDocumentById(new Document(documentId, null, null, null, null));
+            return documentService.findDocumentById(new Document(
+                    documentId,
+                    null,
+                    null,
+                    null,
+                    null,
+                    0)
+            );
         } catch (Exception e) {
             logger.error("Error while getting document", e);
             throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while getting document");
@@ -128,6 +137,28 @@ public class DocumentController {
         } catch (Exception e) {
             logger.error("Error while getting documents", e);
             throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while getting documents");
+        }
+    }
+
+    @PostMapping(path = "/document/{id}/reverse")
+    @ResponseStatus(code = HttpStatus.CREATED)
+    public Document reverseDocument(@PathVariable("id") @Min(1) final int id,
+                                    @RequestParam("posting_date") @DateTimeFormat(pattern = "yyyy-MM-dd") final Date postingDate) throws RestApiException {
+        try {
+            return documentService.reverseDocument(new Document(
+                    id,
+                    null,
+                    postingDate,
+                    null,
+                    null,
+                    0
+            ));
+        } catch (IllegalArgumentException e) {
+            logger.error(e.getMessage());
+            throw new RestApiException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            logger.error("Error while reversing document", e);
+            throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while reversing document");
         }
     }
 }
