@@ -30,6 +30,13 @@ public record Account(
         Account parent
 )
 {
+    public static final String ACCOUNT_20 = "2000000000";
+    public static final String ACCOUNT_26 = "2600000000";
+    public static final String ACCOUNT_51 = "5100000000";
+    public static final String ACCOUNT_68 = "6800000000";
+    public static final String ACCOUNT_69 = "6900000000";
+    public static final String ACCOUNT_70 = "7000000000";
+
     @JsonGetter(value = "parent")
     public String getJsonParent() {
         return parent == null ? null : parent.code();

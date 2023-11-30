@@ -21,6 +21,6 @@ public record Document(
         @NotNull(groups = { DocumentValidation.class })
         @Valid
         List<DocumentPosition> documentPositions,
-        int reverseDocument
+        Integer reverseDocument
 )
 {}

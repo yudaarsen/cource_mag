@@ -17,7 +17,7 @@ public record Deduction (
         @Valid
         Account account,
         @Min(value = 0, groups = { DeductionValidation.class, Default.class, EmployeeDeductionValidation.class })
-        @Max(value = 100, groups = { DeductionValidation.class, Default.class, EmployeeDeductionValidation.class })
-        int rate
+        @Max(value = 10000, groups = { DeductionValidation.class, Default.class, EmployeeDeductionValidation.class })
+        int rate // В базисных пунктах
 )
 {}

@@ -42,6 +42,6 @@ public record Employee(
         @Min(value = 1, groups = { EmployeeValidationUpdate.class, EmployeeValidation.class, Default.class })
         @Nullable
         @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-        long salary
+        double salary
 )
 {}

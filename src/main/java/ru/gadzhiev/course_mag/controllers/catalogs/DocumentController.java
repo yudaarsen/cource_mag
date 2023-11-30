@@ -15,7 +15,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.gadzhiev.course_mag.controllers.exceptions.RestApiException;
 import ru.gadzhiev.course_mag.models.Document;
+import ru.gadzhiev.course_mag.models.DocumentPosition;
 import ru.gadzhiev.course_mag.models.DocumentType;
+import ru.gadzhiev.course_mag.models.Employee;
 import ru.gadzhiev.course_mag.models.validations.DocumentTypeValidation;
 import ru.gadzhiev.course_mag.models.validations.DocumentValidation;
 import ru.gadzhiev.course_mag.services.DocumentService;
@@ -159,6 +161,30 @@ public class DocumentController {
         } catch (Exception e) {
             logger.error("Error while reversing document", e);
             throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while reversing document");
+        }
+    }
+
+    @GetMapping(path = "/document/payment")
+    @ResponseStatus(code = HttpStatus.OK)
+    public List<DocumentPosition> calculatePayment(@RequestParam("id") @Min(1) final int personnelNumber) throws RestApiException {
+        try {
+            return documentService.calculatePayment(
+                    new Employee(
+                            personnelNumber,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            0)
+            );
+        } catch (IllegalArgumentException e) {
+            logger.error(e.getMessage());
+            throw new RestApiException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            logger.error("Error while calculating payment", e);
+            throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while calculating payment");
         }
     }
 }

@@ -35,7 +35,7 @@ public interface EmployeeDao {
                     ),
                     rs.getString("email"),
                     rs.getString("phone"),
-                    rs.getLong("salary")
+                    rs.getDouble("salary")
             );
         }
     }
