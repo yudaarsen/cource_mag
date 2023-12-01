@@ -1,0 +1,32 @@
+table {
+    border:1px solid;
+}
+
+table td {
+    border:1px solid;
+}
+
+table th {
+    border:1px solid;
+    padding: 10px;
+}
+
+td {
+    margin: 0;
+    input {
+        padding: 0;
+        margin: 0;
+        border: 0;
+    };
+    input:hover {
+        background-color: rgb(225, 255, 176);
+        transition: 200ms;
+    }
+}
+
+
+
+.no-border:not(:focus) {
+    border: none !important;
+}
+
