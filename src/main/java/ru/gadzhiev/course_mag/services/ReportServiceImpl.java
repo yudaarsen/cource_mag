@@ -34,13 +34,17 @@ public class ReportServiceImpl implements ReportService {
                     break;
                 }
             }
-            pos.setEndDebit(Math.max(0, pos.getPeriodDebit() - pos.getPeriodCredit()) + pos.getStartDebit());
-            pos.setEndCredit(Math.max(0, pos.getPeriodCredit() - pos.getPeriodDebit()) + pos.getStartCredit());
+            if(pos.getStartDebit() + pos.getPeriodDebit() > pos.getStartCredit() + pos.getPeriodCredit())
+                pos.setEndDebit(Math.max(0, pos.getStartDebit() + pos.getPeriodDebit() - pos.getPeriodCredit()));
+            else
+                pos.setEndCredit(Math.max(0, pos.getStartCredit() + pos.getPeriodCredit() - pos.getPeriodDebit()));
         }
 
         return new Osv(
                 result,
-                jdbi.withExtension(ReportDao.class, extension -> extension.getOsvTotals(fromDate, toDate, reverseType))
+                jdbi.withExtension(ReportDao.class, extension -> extension.getOsvTotals(fromDate, toDate, reverseType)),
+                jdbi.withExtension(ReportDao.class, extension -> extension.getOsvTotals(new Date(0), prevDate, reverseType)),
+                jdbi.withExtension(ReportDao.class, extension -> extension.getOsvTotals(new Date(0), toDate, reverseType))
         );
     }
 }
