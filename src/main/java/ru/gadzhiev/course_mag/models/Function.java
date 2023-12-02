@@ -13,7 +13,7 @@ import ru.gadzhiev.course_mag.models.validations.EmployeeValidationUpdate;
 import ru.gadzhiev.course_mag.models.validations.FunctionValidation;
 
 public record Function(
-        @Min(value = 1, groups = { EmployeeValidationUpdate.class, EmployeeValidation.class, Default.class })
+        @Min(value = 1, groups = { EmployeeValidationUpdate.class, EmployeeValidation.class })
         @NotNull(groups = { EmployeeValidation.class, EmployeeValidationUpdate.class})
         int id,
         @NotNull(groups = { FunctionValidation.class, Default.class })

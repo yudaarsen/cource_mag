@@ -5,5 +5,9 @@ export default function ActionDeleteOrEditButton(props) {
             onMouseUp={props.handleEdit}>
                 Сохранить
         </button>
-    return <button type="button" className="btn btn-danger" onClick={props.handleDelete}>Удалить</button>
+    return <button type="button" className="btn btn-danger" 
+                onMouseDown={() => props.setBlur(false)} 
+                onMouseUp={props.handleDelete}>
+                    Удалить
+            </button>
 }

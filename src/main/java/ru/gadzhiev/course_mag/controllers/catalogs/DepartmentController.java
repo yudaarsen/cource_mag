@@ -53,7 +53,7 @@ public class DepartmentController {
 
     @PutMapping(path = "/department/{id}")
     @ResponseStatus(code = HttpStatus.OK)
-    public Department patchDepartment(@PathVariable("id") @NotNull @Min(1) int id, @RequestBody @Validated Department department) throws RestApiException {
+    public Department putDepartment(@PathVariable("id") @NotNull @Min(1) int id, @RequestBody @Validated Department department) throws RestApiException {
         try {
             Department updatedDepartment = departmentService.update(new Department(id, department.name()));
             logger.debug("Department is updated: " + updatedDepartment);
@@ -94,7 +94,7 @@ public class DepartmentController {
         catch (Exception e) {
             if(e.getCause() instanceof PSQLException) {
                 if(((PSQLException)e.getCause()).getSQLState().equals("23503")) {
-                    logger.warn("Department has references", e);
+                    logger.warn("Department has references: " + id);
                     throw new RestApiException(HttpStatus.BAD_REQUEST, "Department has references");
                 }
             }

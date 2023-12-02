@@ -32,3 +32,8 @@ td {
     background-color: white !important;
 }
 
+option {
+    height: 30px;
+    overflow: auto;
+  }
+

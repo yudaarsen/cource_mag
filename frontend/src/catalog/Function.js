@@ -5,7 +5,8 @@ import ActionDeleteButton from '../components/ActionDeleteButton'
 import ActionDeleteOrEditButton from '../components/ActionDeleteOrEditButton'
 import ActiveInput from '../components/ActiveInput'
 import ActionCreateButton from '../components/ActionCreateButton';
-import { createDepartment, deleteDepartment, getDepartments, updateDepartment } from '../utils/api';
+import { createFunction, deleteFunction, getDepartments, getFunctions, updateFunction } from '../utils/api';
+
 
 function Row(props) {
     const [rowChange, setRowChange] = useState();
@@ -36,10 +37,9 @@ function Row(props) {
     }
 
     function editHandler(e) {
-        const element = e.target;
-        const id = parseInt(element.parentElement.parentElement.getAttribute("name").substring(7));
-        const name = element.parentElement.parentElement.querySelector('input[name="dep_name"]').value;
-        let result = props.saveFunc(id, name);
+        let id = parseInt(e.target.parentElement.parentElement.getAttribute("name").substring(7));
+        console.log(id);
+        let result = props.saveFunc(id, e.target.parentElement.parentElement.querySelector('input[name="name"]').value);
         if(!result) {
             props.changeData(id, oldValue.current);
         }
@@ -53,7 +53,7 @@ function Row(props) {
     }
 
     function createHandler(e) {
-        const name = e.target.parentElement.parentElement.querySelector('input[name="dep_name"]').value;
+        const name = e.target.parentElement.parentElement.querySelector('input[name="name"]').value;
         props.createFunc(name);
     }
 
@@ -70,15 +70,15 @@ function Row(props) {
             handleBlur={onBlur}
             handleChange={handleChange}
             value={props.data.name}
-            name={'dep_name'}
+            name={'name'}
             minLength={1}
-            maxLength={50} 
+            maxLength={100} 
         />)
         : <input disabled className="form-control shadow-none no-border" value={props.data.name} />
 
     return (
         <tr name={"tb_row_" + props.data.id}>
-            <td className="text-center" name="dep_id">{isNaN(props.data.id) ? '' : props.data.id}</td>
+            <td className="text-center" name="id">{isNaN(props.data.id) ? '' : props.data.id}</td>
             <td>
                 {input}
             </td>
@@ -89,17 +89,23 @@ function Row(props) {
     )
 }
 
-function Department() {
+export default function Function() {
     const [data, setData] = useState([]);
+    const [departments, setDepartments] = useState([]);
+
+    async function initialize() {
+        const res = await getDepartments(setDepartments);
+        await getFunctions(res[0].id, setData);
+    }
 
     useEffect(() => {
-        getDepartments(setData);
+       initialize();
     }, []);
 
     async function handleDelete(id) {
-        const result = await deleteDepartment(id);
+        const result = await deleteFunction(id);
         if(!result)
-            return;
+            return; 
         data.splice(data.findIndex((element) => element.id === id), 1);
         setData([...data]);
     }
@@ -109,15 +115,21 @@ function Department() {
         setData([...data]);
     }
 
-
     async function handleCreate(name) {
-        await createDepartment(name);
-        await getDepartments(setData);
+        const departmentId = document.getElementById('departments').value;
+        await createFunction(name, departmentId);
+        await getFunctions(departmentId, setData);
+    }
+
+    async function handleSelectChange(e) {
+        const departmentId = e.target.value;
+        await getFunctions(departmentId, setData);
     }
 
     async function handleSave(id, name) {
-        await updateDepartment(id, name);
-        await getDepartments(setData);
+        const departmentId = document.getElementById('departments').value;
+        await updateFunction(id, name);
+        await getFunctions(departmentId, setData);
     }
 
     function addRow(e) {
@@ -133,16 +145,31 @@ function Department() {
                  changeData={handleChange}
                  editable={true}
                  delFunc={handleDelete}
-                 createFunc={handleCreate} 
-                 saveFunc={handleSave}
+                 createFunc={handleCreate}
+                 saveFunc={handleSave} 
             />
+        );
+    }
+
+    const departmentsRepr = [];
+    for(const item of departments) {
+        departmentsRepr.push(
+            <option key={item.id} value={item.id}>
+                {item.name}
+            </option>
         );
     }
 
     return (
         <div className="container">
-          <h1>Подразделения</h1>
+          <h1>Должности</h1>
           <div className='container p-0'>
+            <div className="form-floating">
+                <select className="form-select" id='departments' onChange={handleSelectChange}>
+                    {departmentsRepr}
+                </select>
+                <label for="departments">Подразделение:</label>
+            </div>
             <span>Действия:</span>
             <button type="button" className="m-3 btn btn-success" onClick={addRow}>Создать</button> 
           </div>     
@@ -161,5 +188,3 @@ function Department() {
         </div>
     )
 }
-
-export default Department;
