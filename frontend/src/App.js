@@ -1,9 +1,14 @@
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Department from "./catalog/Department";
 
 function App() {
   return (
     <>
-      <Department />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/departments" element={ <Department /> }/>
+      </Routes>
+    </BrowserRouter>
     </>
   );
 }
