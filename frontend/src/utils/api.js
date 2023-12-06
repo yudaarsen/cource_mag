@@ -170,3 +170,58 @@ export async function deleteDocumentType(code) {
     }
     return true;
 }
+
+// Account
+
+export async function getAccounts(setter) {
+    const accounts = await fetch(BASE_URL + '/accounts', CONTENT_TYPE)
+        .then((response) => response.json());
+    setter(accounts);
+    return accounts;
+}
+
+export async function createAccount(account) {
+    if(!account || !account.code || !account.name || account.code.length != 10) {
+        alert('Введите код и название. Код должен состоять из 10-х цифр');
+        return;
+    }
+
+    let body = {
+        "code" : account.code,
+        "name" : account.name
+    };
+    if(account.parent)
+        body = {
+            ...body,
+            parent: {
+                code : account.parent
+            }
+        };
+
+    const response = await fetch(BASE_URL + '/account', {
+        ...CONTENT_TYPE,
+        method: "POST",
+        body: JSON.stringify(body)
+    });
+    if(response.status === 409 || response.status === 400) {
+        const message = await response.json();
+        alert('Произошла ошибка при выполнении запроса:\n' + message.message);
+    } else if(!response.ok) {
+        alert('Произошла ошибка при создании типа документа');
+    }
+}
+
+export async function deleteAccount(code) {
+    const response = await fetch(BASE_URL + '/account/' + code, {
+        ...CONTENT_TYPE,
+        method: "DELETE"
+    });
+    if(!response.ok) {
+        if(response.status === 400) {
+            const message = await response.json();
+            alert('Произошла ошибка при выполнении запроса:\n' + message.message);
+        }
+        return false;
+    }
+    return true;
+}

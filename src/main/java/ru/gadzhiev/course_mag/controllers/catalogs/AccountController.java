@@ -61,7 +61,7 @@ public class AccountController {
             logger.debug("Account is deleted: " + code);
         } catch (IllegalArgumentException e) {
             logger.debug(e.getMessage());
-            throw new RestApiException(HttpStatus.NO_CONTENT, "");
+            throw new RestApiException(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (Exception e) {
             if(e.getCause() instanceof PSQLException) {
                 if(((PSQLException)e.getCause()).getSQLState().equals("23503")) {

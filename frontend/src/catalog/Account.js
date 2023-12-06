@@ -4,30 +4,24 @@ import 'bootstrap/dist/css/bootstrap.css'
 import ActionDeleteButton from '../components/ActionDeleteButton'
 import ActiveInput from '../components/ActiveInput'
 import ActionCreateButton from '../components/ActionCreateButton';
-import { createDocumentType, deleteDocumentType, getDocumentTypes } from '../utils/api';
-
+import { createAccount, deleteAccount, getAccounts } from '../utils/api';
 
 function Row(props) {
     function handleChange(e) {
         let element = e.target;
         let id = parseInt(element.parentElement.parentElement.getAttribute("name").substring(7));
         let nextData = props.data;
-        if(element.getAttribute('name') === 'code') 
-            nextData.code = element.value; 
-        else
-            nextData.name = element.value; 
+        const attr = element.getAttribute('name');
+        nextData[attr] = element.value;
         props.changeData(id, nextData);
     }
 
     function deleteHandler(e) {
-        const code = e.target.parentElement.parentElement.querySelector('input[name="code"]').value;
-        props.delFunc(code);
+        props.delFunc(props.data.code);
     }
 
     function createHandler(e) {
-        const code = e.target.parentElement.parentElement.querySelector('input[name="code"]').value;
-        const name = e.target.parentElement.parentElement.querySelector('input[name="name"]').value;
-        props.createFunc(code, name);
+        props.createFunc(props.data);
     }
 
     const inputName = props.editable || props.create ? 
@@ -45,11 +39,28 @@ function Row(props) {
             value={!props.data.code ? '' : props.data.code}
             name={'code'}
             handleChange={handleChange}
-            minLength={4}
-            maxLength={4} 
+            minLength={10}
+            maxLength={10} 
         />)
         : <input disabled className="form-control shadow-none no-border" name='code' value={props.data.code} />
     
+
+    const options = [<option key={0} value={null}>Нет</option>];
+    for(const op in props.accountOptions) {
+        if(op != props.createIdx)
+            options.push(
+                <option key={op+1} value={props.accountOptions[op].code}>
+                    {props.accountOptions[op].code + ' ' + props.accountOptions[op].name}
+                </option>
+            );
+    }
+
+    const inputParent = props.editable || props.create ? 
+    <select name='parent' className='form-select' onChange={handleChange}>
+        {options}
+    </select>
+    : <input disabled className="form-control shadow-none no-border" name='parent' value={props.data.parent} />
+
     let action = <ActionDeleteButton handleDelete={deleteHandler} /> ;
     if(props.create) {
         action = <ActionCreateButton handleCreate={createHandler} setBlur={() => null} />
@@ -63,6 +74,9 @@ function Row(props) {
             <td>
                 {inputName}
             </td>
+            <td>
+                {inputParent}
+            </td>
             <td className="text-center">
                 {action}
             </td>
@@ -70,12 +84,12 @@ function Row(props) {
     )
 }
 
-export default function DocumentType() {
+export default function Account() {
     const [data, setData] = useState([]);
     const createIdx = useRef();
 
     async function initialize() {
-        await getDocumentTypes(setData);
+        await getAccounts(setData);
     }
 
     useEffect(() => {
@@ -83,7 +97,7 @@ export default function DocumentType() {
     }, []);
 
     async function handleDelete(code) {
-        const result = await deleteDocumentType(code);
+        const result = await deleteAccount(code);
         if(!result)
             return; 
         data.splice(data.findIndex((element) => element.code === code), 1);
@@ -91,12 +105,12 @@ export default function DocumentType() {
     }
 
     function handleChange(code, elementData) {
-        data.splice(data.findIndex((element) => element.code === code), 1, {code: elementData.code, name : elementData.name});
+        data.splice(data.findIndex((element) => element.code === code), 1, {...elementData});
         setData([...data]);
     }
 
-    async function handleCreate(code, name) {
-        await createDocumentType(code, name);
+    async function handleCreate(account) {
+        await createAccount(account);
         createIdx.current = null;
         initialize();
     }
@@ -118,16 +132,18 @@ export default function DocumentType() {
                  data={data[i]}
                  editable={false}
                  create={createIdx.current == i}
+                 createIdx={createIdx.current}
                  delFunc={handleDelete}
                  createFunc={handleCreate}
                  changeData={handleChange}
+                 accountOptions={data}
             />
         );
     }
 
     return (
         <div className="container">
-          <h1>Типы документов</h1>
+          <h1>План счетов</h1>
           <div className='container p-0'>
             <span>Действия:</span>
             <button type="button" className="m-3 btn btn-success" onClick={addRow}>Создать</button> 
@@ -135,8 +151,9 @@ export default function DocumentType() {
           <table className="table">
             <thead>
                 <tr>
-                    <th className="col-1 text-center">Код</th>
+                    <th className="col-2 text-center">Код</th>
                     <th>Наименование</th>
+                    <th className="col-2 text-center">Вышестоящий счет</th>
                     <th className="col-1 text-center">Действия</th>
                 </tr>
             </thead>
