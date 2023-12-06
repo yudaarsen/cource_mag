@@ -28,6 +28,8 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public int deleteDocumentType(DocumentType documentType) throws Exception {
+        if(documentType.code().equals(DocumentType.TYPE_REVERSE))
+            throw new IllegalArgumentException("Type " + DocumentType.TYPE_REVERSE +  " cannot be deleted!");
         int result = jdbi.withExtension(DocumentTypeDao.class, extension -> extension.delete(documentType));
         if(result > 0)
             return result;

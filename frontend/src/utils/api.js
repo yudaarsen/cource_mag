@@ -124,3 +124,49 @@ export async function updateFunction(id, name) {
         })
     });
 }
+
+// Document types
+
+export async function getDocumentTypes(setter) {
+    const documentTypes = await fetch(BASE_URL + '/document_types', CONTENT_TYPE)
+        .then((response) => response.json());
+    setter(documentTypes);
+    return documentTypes;
+} 
+
+export async function createDocumentType(code, name) {
+    if(!code || !name || code.length != 4) {
+        alert('Введите код и название. Код должен состоять из 4-х символов');
+        return;
+    }
+
+    const response = await fetch(BASE_URL + '/document_type', {
+        ...CONTENT_TYPE,
+        method: "POST",
+        body: JSON.stringify({
+            "code" : code,
+            "name" : name
+        })
+    });
+    if(response.status === 409) {
+        const message = await response.json();
+        alert('Произошла ошибка при выполнении запроса:\n' + message.message);
+    } else if(!response.ok) {
+        alert('Произошла ошибка при создании типа документа');
+    }
+}
+
+export async function deleteDocumentType(code) {
+    const response = await fetch(BASE_URL + '/document_type/' + code, {
+        ...CONTENT_TYPE,
+        method: "DELETE"
+    });
+    if(!response.ok) {
+        if(response.status === 400) {
+            const message = await response.json();
+            alert('Произошла ошибка при выполнении запроса:\n' + message.message);
+        }
+        return false;
+    }
+    return true;
+}
