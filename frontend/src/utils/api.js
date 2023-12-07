@@ -225,3 +225,63 @@ export async function deleteAccount(code) {
     }
     return true;
 }
+
+// Deduction
+
+export async function getDeductions(setter) {
+    const deductions = await fetch(BASE_URL + '/deductions', CONTENT_TYPE)
+        .then((response) => response.json());
+    setter(deductions);
+    return deductions;
+}
+
+export async function createDeduction(deduction) {
+    if(!deduction || !deduction.code || !deduction.account || deduction.code.length != 4) {
+        alert('Введите код и счет. Код должен состоять из 4-х символов');
+        return;
+    }
+
+    let body = {
+        "code" : deduction.code,
+        "account" : {
+            "code" : deduction.account
+        },
+        "rate" : deduction.rate ? deduction.rate : 0 
+    };
+    
+    const response = await fetch(BASE_URL + '/deduction', {
+        ...CONTENT_TYPE,
+        method: "POST",
+        body: JSON.stringify(body)
+    });
+    if(response.status === 409 || response.status === 400) {
+        const message = await response.json();
+        alert('Произошла ошибка при выполнении запроса:\n' + message.message);
+    } else if(!response.ok) {
+        alert('Произошла ошибка при создании вычета');
+    }
+}
+
+export async function deleteDeduction(code) {
+    const response = await fetch(BASE_URL + '/deduction/' + code, {
+        ...CONTENT_TYPE,
+        method: "DELETE"
+    });
+    if(!response.ok) {
+        if(response.status === 400) {
+            const message = await response.json();
+            alert('Произошла ошибка при выполнении запроса:\n' + message.message);
+        }
+        return false;
+    }
+    return true;
+}
+
+// Employee
+
+export async function getEmployees(setter) {
+    const deductions = await fetch(BASE_URL + '/deductions', CONTENT_TYPE)
+        .then((response) => response.json());
+    setter(deductions);
+    return deductions;
+}
