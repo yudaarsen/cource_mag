@@ -5,6 +5,7 @@ import ActionDeleteButton from '../components/ActionDeleteButton'
 import ActiveInput from '../components/ActiveInput'
 import ActionCreateButton from '../components/ActionCreateButton';
 import { createDocumentType, deleteDocumentType, getDocumentTypes } from '../utils/api';
+import Navbar from "../menu/Navbar";
 
 
 function Row(props) {
@@ -125,7 +126,8 @@ export default function DocumentType() {
         );
     }
 
-    return (
+    return (<>
+        <Navbar />
         <div className="container">
           <h1>Типы документов</h1>
           <div className='container p-0'>
@@ -145,5 +147,5 @@ export default function DocumentType() {
             </tbody>
           </table>  
         </div>
-    )
+    </>)
 }

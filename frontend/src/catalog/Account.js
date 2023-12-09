@@ -5,6 +5,7 @@ import ActionDeleteButton from '../components/ActionDeleteButton'
 import ActiveInput from '../components/ActiveInput'
 import ActionCreateButton from '../components/ActionCreateButton';
 import { createAccount, deleteAccount, getAccounts } from '../utils/api';
+import Navbar from "../menu/Navbar";
 
 function Row(props) {
     function handleChange(e) {
@@ -141,7 +142,8 @@ export default function Account() {
         );
     }
 
-    return (
+    return (<>
+        <Navbar />
         <div className="container">
           <h1>План счетов</h1>
           <div className='container p-0'>
@@ -162,5 +164,5 @@ export default function Account() {
             </tbody>
           </table>  
         </div>
-    )
+        </>)
 }

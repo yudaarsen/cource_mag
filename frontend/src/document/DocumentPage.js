@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { createDocument, getAccounts, getDocument, getDocumentTypes, getEmployees, getPayment } from "../utils/api";
 import { getDateFormat } from "../utils/utils";
 import '../styles/common.css'
+import Navbar from "../menu/Navbar";
 
 function TypeField(props) {
     const options = [];
@@ -114,6 +115,8 @@ export default function DocumentPage(props) {
 
     async function handleAuto(e) {
         const payment = await getPayment(autoPaym);
+        if(!payment.length)
+            return 
         for(const pos of payment) {
             positions.push({
                 posType: pos.posType,
@@ -194,7 +197,8 @@ export default function DocumentPage(props) {
         );
     }
 
-    return (
+    return (<>
+        <Navbar />
         <div className="m-3">
           <h1>{title}</h1>
           <div className='p-0 mt-3'>
@@ -302,5 +306,5 @@ export default function DocumentPage(props) {
             </tbody>
           </table>  
         </div>
-    );
+    </>);
 }

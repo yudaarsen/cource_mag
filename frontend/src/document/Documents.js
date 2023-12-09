@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getDocuments, reverseDocument } from "../utils/api";
 import { getDateFormat } from "../utils/utils";
+import Navbar from "../menu/Navbar";
 
 
 export default function Documents() {
@@ -42,7 +43,8 @@ export default function Documents() {
         );
     }
     
-    return (
+    return (<>
+        <Navbar />
         <div className="container">
           <h1>Документы</h1>
           <div className='container p-0'>
@@ -75,5 +77,5 @@ export default function Documents() {
             </tbody>
           </table>  
         </div>
-    )
+    </>)
 }

@@ -5,6 +5,7 @@ import ActionDeleteButton from '../components/ActionDeleteButton'
 import ActiveInput from '../components/ActiveInput'
 import ActionCreateButton from '../components/ActionCreateButton';
 import { createDeduction, deleteDeduction, getAccounts, getDeductions } from '../utils/api';
+import Navbar from "../menu/Navbar";
 
 function Row(props) {
     function handleChange(e) {
@@ -145,7 +146,8 @@ export default function Deduction() {
         );
     }
 
-    return (
+    return (<>
+        <Navbar />
         <div className="container">
           <h1>Вычеты</h1>
           <div className='container p-0'>
@@ -166,5 +168,5 @@ export default function Deduction() {
             </tbody>
           </table>  
         </div>
-    )
+    </>)
 }

@@ -6,6 +6,7 @@ import ActionDeleteOrEditButton from '../components/ActionDeleteOrEditButton'
 import ActiveInput from '../components/ActiveInput'
 import ActionCreateButton from '../components/ActionCreateButton';
 import { createDepartment, deleteDepartment, getDepartments, updateDepartment } from '../utils/api';
+import Navbar from "../menu/Navbar";
 
 function Row(props) {
     const [rowChange, setRowChange] = useState();
@@ -139,7 +140,8 @@ function Department() {
         );
     }
 
-    return (
+    return (<>
+        <Navbar />
         <div className="container">
           <h1>Подразделения</h1>
           <div className='container p-0'>
@@ -159,7 +161,7 @@ function Department() {
             </tbody>
           </table>  
         </div>
-    )
+    </>)
 }
 
 export default Department;

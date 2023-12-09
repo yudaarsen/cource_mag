@@ -4,9 +4,9 @@ import 'bootstrap/dist/css/bootstrap.css'
 import ActionDeleteButton from '../components/ActionDeleteButton'
 import ActiveInput from '../components/ActiveInput'
 import ActionCreateButton from '../components/ActionCreateButton';
-import ActionDeleteOrEditButton from '../components/ActionDeleteOrEditButton';
-import { createEmployee, createEmployeeDeductin, createEmployeeDeduction, deleteEmployee, deleteEmployeeDeduction, getAllFunctions, getDeductions, getDepartments, getEmployeeDeductions, getEmployees, updateEmployee } from '../utils/api';
+import {  createEmployeeDeduction, deleteEmployeeDeduction, getDeductions, getEmployeeDeductions} from '../utils/api';
 import { useParams } from 'react-router-dom';
+import Navbar from "../menu/Navbar";
 
 function Row(props) {   
     function handleChange(e) {
@@ -155,7 +155,8 @@ export default function EmployeeDeductions() {
         );
     }
 
-    return (
+    return (<>
+        <Navbar />
         <div className='container'>
             <div className='m-3'>
             <h1>Вычеты сотрудника</h1>
@@ -178,5 +179,5 @@ export default function EmployeeDeductions() {
             </table>  
             </div>
         </div>
-    )
+    </>)
 }

@@ -5,6 +5,7 @@ import ActionDeleteButton from '../components/ActionDeleteButton'
 import ActionCreateButton from '../components/ActionCreateButton';
 import { createTimesheet, deleteTimesheet, getTimesheet } from '../utils/api';
 import { useParams } from 'react-router-dom';
+import Navbar from "../menu/Navbar";
 
 function Row(props) {   
     function handleChange(e) {
@@ -128,7 +129,8 @@ export default function Timesheet() {
         );
     }
 
-    return (
+    return (<>
+        <Navbar />
         <div className='container'>
             <div className='m-3'>
             <h1>Табель рабочего времени</h1>
@@ -151,5 +153,5 @@ export default function Timesheet() {
             </table>  
             </div>
         </div>
-    )
+    </>)
 }

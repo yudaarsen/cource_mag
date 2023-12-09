@@ -6,6 +6,7 @@ import ActionDeleteOrEditButton from '../components/ActionDeleteOrEditButton'
 import ActiveInput from '../components/ActiveInput'
 import ActionCreateButton from '../components/ActionCreateButton';
 import { createFunction, deleteFunction, getDepartments, getFunctions, updateFunction } from '../utils/api';
+import Navbar from "../menu/Navbar";
 
 
 function Row(props) {
@@ -160,7 +161,8 @@ export default function Function() {
         );
     }
 
-    return (
+    return (<>
+        <Navbar />
         <div className="container">
           <h1>Должности</h1>
           <div className='container p-0'>
@@ -186,5 +188,5 @@ export default function Function() {
             </tbody>
           </table>  
         </div>
-    )
+    </>)
 }

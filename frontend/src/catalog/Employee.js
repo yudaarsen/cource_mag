@@ -6,6 +6,7 @@ import ActiveInput from '../components/ActiveInput'
 import ActionCreateButton from '../components/ActionCreateButton';
 import ActionDeleteOrEditButton from '../components/ActionDeleteOrEditButton';
 import { createEmployee, deleteEmployee, getAllFunctions, getDepartments, getEmployees, updateEmployee } from '../utils/api';
+import Navbar from "../menu/Navbar";
 
 function Row(props) {
     const [rowChange, setRowChange] = useState();
@@ -262,7 +263,8 @@ export default function Employee() {
         );
     }
 
-    return (
+    return (<>
+        <Navbar />
         <div className='m-3'>
           <h1>Сотрудники</h1>
           <div>
@@ -289,5 +291,5 @@ export default function Employee() {
             </tbody>
           </table>  
         </div>
-    )
+    </>)
 }
