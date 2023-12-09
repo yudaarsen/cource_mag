@@ -31,14 +31,35 @@ public interface DeductionDao {
         }
     }
 
+    class DeductionFullRowMapper implements RowMapper<Deduction> {
+        @Override
+        public Deduction map(ResultSet rs, StatementContext ctx) throws SQLException {
+            return new Deduction(
+                    rs.getString("code"),
+                    new Account(
+                            rs.getString("account_id"),
+                            rs.getString("account_name"),
+                            null
+                    ),
+                    rs.getInt("rate")
+            );
+        }
+    }
+
     @SqlQuery("INSERT INTO deduction VALUES (UPPER(:code), :account.code, :rate) RETURNING *")
     @UseRowMapper(DeductionRowMapper.class)
     Deduction create(@BindMethods final Deduction deduction);
 
     @SqlUpdate("DELETE FROM deduction WHERE code = :code")
     int delete(@BindMethods final Deduction deduction);
-    @SqlQuery("SELECT * FROM deduction")
-    @UseRowMapper(DeductionRowMapper.class)
+    @SqlQuery("""
+        SELECT deduction.*
+        , account.name AS "account_name"
+        FROM deduction
+            INNER JOIN account 
+                ON deduction.account_id = account.code
+    """)
+    @UseRowMapper(DeductionFullRowMapper.class)
     List<Deduction> getAll();
 
     @SqlQuery("SELECT d.code, d.account_id, GREATEST(d.rate, ed.rate) AS rate FROM employee_deduction AS ed INNER JOIN deduction AS d ON ed.deduction_id = d.code " +

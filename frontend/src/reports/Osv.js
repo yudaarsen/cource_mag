@@ -25,26 +25,66 @@ export default function Osv() {
                     {el.account.code + ' ' + el.account.name}
                 </td>
                 <td>
-                    {el.startDebit}
+                    {el.startDebit.toFixed(2)}
                 </td>
                 <td>
-                    {el.startCredit}
+                    {el.startCredit.toFixed(2)}
                 </td>
                 <td>
-                    {el.periodDebit}
+                    {el.periodDebit.toFixed(2)}
                 </td>
                 <td>
-                    {el.periodCredit}
+                    {el.periodCredit.toFixed(2)}
                 </td>
                 <td>
-                    {el.endDebit}
+                    {el.endDebit.toFixed(2)}
                 </td>
                 <td>
-                    {el.endCredit}
+                    {el.endCredit.toFixed(2)}
                 </td>
             </tr>
         );
     }
+
+    rows.push(
+        <tr key={'Total'}>
+            <td>
+                <b>
+                    Итого
+                </b>
+            </td>
+            <td>
+                <b>
+                    {data.prevTotals?.debit.toFixed(2)}
+                </b>
+            </td>
+            <td>
+                <b>
+                    {data.prevTotals?.credit.toFixed(2)}
+                </b>
+            </td>
+            <td>
+                <b>
+                    {data.periodTotals?.debit.toFixed(2)}
+                </b>
+            </td>
+            <td>
+                <b>
+                    {data.periodTotals?.credit.toFixed(2)}
+                </b>
+            </td>
+            <td>
+                <b>
+                    {data.endTotals?.debit.toFixed(2)}
+                </b>
+            </td>
+            <td>
+                <b>
+                    {data.endTotals?.credit.toFixed(2)}
+                </b>
+            </td>
+        </tr>
+    )
 
 
     return (<>

@@ -28,6 +28,7 @@ public class AccountServiceImpl implements AccountService {
             || account.code().equals(Account.ACCOUNT_68)
             || account.code().equals(Account.ACCOUNT_70)
             || account.code().equals(Account.ACCOUNT_69)
+            || account.code().equals(Account.ACCOUNT_76)
         )
             throw new IllegalArgumentException("Account " + account.code() + " cannot be deleted!");
         return jdbi.withExtension(AccountDao.class, extension -> extension.delete(account));

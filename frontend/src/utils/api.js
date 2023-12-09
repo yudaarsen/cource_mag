@@ -522,6 +522,10 @@ export async function createDocument(document) {
         return;
     }
 
+    for(const i in document.documentPositions) {
+        document.documentPositions[i].account.parent = null;
+    }
+
     const response = await fetch(BASE_URL + '/document', {
         ...CONTENT_TYPE,
         method: "POST",

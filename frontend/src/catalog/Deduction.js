@@ -61,7 +61,7 @@ function Row(props) {
     <select name='account' className='form-select' onChange={handleChange}>
         {options}
     </select>
-    : <input disabled className="form-control shadow-none no-border" name='account' value={props.data.account.code} />
+    : <input disabled className="form-control shadow-none no-border" name='account' value={props.data.account.code + ' ' + props.data.account.name} />
 
     let action = <ActionDeleteButton handleDelete={deleteHandler} /> ;
     if(props.create) {

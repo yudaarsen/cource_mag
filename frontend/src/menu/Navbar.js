@@ -10,6 +10,9 @@ export default function Navbar() {
                     <li className="nav-item active">
                         <a className="nav-link" href="/employees">Кадры</a>
                     </li>
+                    <li className="nav-item active">
+                        <a className="nav-link" href="/report/osv">ОСВ</a>
+                    </li>
                 </ul>
             </div>
         </nav>

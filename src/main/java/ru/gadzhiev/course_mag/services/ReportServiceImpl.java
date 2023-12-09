@@ -30,7 +30,7 @@ public class ReportServiceImpl implements ReportService {
             for(OsvPosition prevPos : prevPeriodOsv) {
                 if(pos.getAccount().code().equals(prevPos.getAccount().code())) {
                     pos.setStartDebit(Math.max(0, prevPos.getPeriodDebit() - prevPos.getPeriodCredit()));
-                    pos.setStartDebit(Math.max(0, prevPos.getPeriodCredit() - prevPos.getPeriodDebit()));
+                    pos.setStartCredit(Math.max(0, prevPos.getPeriodCredit() - prevPos.getPeriodDebit()));
                     break;
                 }
             }
