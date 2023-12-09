@@ -173,7 +173,11 @@ function Row(props) {
                 Вычеты
             </a>
         );
-        actions.push(<button type="button" className='btn btn-dark'>Табель</button>);
+        actions.push(
+            <a href={'/employee/' + props.data.personnelNumber + '/timesheet'} role='button' aria-pressed="true" className='btn btn-dark m-2'>
+                Табель
+            </a>
+        );
     }
 
     return (

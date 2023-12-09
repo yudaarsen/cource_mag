@@ -29,5 +29,5 @@ public interface EmployeeService {
 
     int deleteTimesheet(final Timesheet timesheet) throws Exception;
 
-    List<Timesheet> findEmployeeTimesheet(final Employee employee, final int year, final int month) throws Exception;
+    List<Timesheet> findEmployeeTimesheet(final Employee employee) throws Exception;
 }

@@ -418,3 +418,71 @@ export async function deleteEmployeeDeduction(personnelNumber, code) {
     }
     return true;
 }
+
+// Timesheet
+
+export async function getTimesheet(personnelNumber, setter) {
+    const timesheet = await fetch(BASE_URL + '/employee/' + personnelNumber + '/timesheet', CONTENT_TYPE)
+        .then((response) => response.json());
+    const result = [];
+    for(const el of timesheet) {
+        result.push({
+            date: `${el.year}-${el.month}-${("0" + el.day).slice(-2)}`,
+            present: el.present
+        });
+    }
+    setter(result);
+    return result;
+}
+
+export async function createTimesheet(personnelNumber, timesheet) {
+    if(!personnelNumber || !timesheet) {
+        alert('Заполните данные!');
+        return;
+    }
+
+    const date = timesheet.date;
+    let body = {
+        year: date.substr(0, 4),
+        month: date.substr(5, 2),
+        day: date.substr(8, 2),
+        present: timesheet.present
+    };
+
+    const response = await fetch(BASE_URL + '/employee/' + personnelNumber + '/timesheet', {
+        ...CONTENT_TYPE,
+        method: "POST",
+        body: JSON.stringify(body)
+    });
+    if(response.status === 400 || response.status == 409) {
+        const message = await response.json();
+        alert('Произошла ошибка при выполнении запроса:\n' + message.message);
+    } else if(!response.ok) {
+        alert('Произошла ошибка при создании табеля рабочего времени');
+    }
+}
+
+export async function deleteTimesheet(personnelNumber, timesheet) {
+    const date = timesheet.date;
+    let body = {
+        year: date.substr(0, 4),
+        month: date.substr(5, 2),
+        day: date.substr(8, 2),
+        present: timesheet.present
+    };
+
+    const response = await fetch(BASE_URL + '/employee/' + personnelNumber + '/timesheet', {
+        ...CONTENT_TYPE,
+        method: "DELETE",
+        body: JSON.stringify(body)
+    });
+
+    if(!response.ok) {
+        if(response.status === 400 || response.status === 500) {
+            const message = await response.json();
+            alert('Произошла ошибка при выполнении запроса:\n' + message.message);
+        }
+        return false;
+    }
+    return true;
+}

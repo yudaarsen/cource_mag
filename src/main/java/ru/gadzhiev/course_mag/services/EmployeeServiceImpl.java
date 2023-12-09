@@ -135,7 +135,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<Timesheet> findEmployeeTimesheet(final Employee employee, final int year, final int month) throws Exception {
-        return jdbi.withExtension(TimesheetDao.class, extension -> extension.getEmployeeTimesheet(employee, year, month));
+    public List<Timesheet> findEmployeeTimesheet(final Employee employee) throws Exception {
+        return jdbi.withExtension(TimesheetDao.class, extension -> extension.getEmployeeTimesheet(employee));
     }
 }

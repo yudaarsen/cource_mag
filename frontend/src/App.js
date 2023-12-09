@@ -6,6 +6,7 @@ import Account from "./catalog/Account";
 import Deduction from "./catalog/Deduction";
 import Employee from "./catalog/Employee";
 import EmployeeDeductions from "./catalog/EmployeeDeductions";
+import Timesheet from "./catalog/Timesheet";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/deductions" element={ <Deduction /> } />
         <Route path="/employees" element={ <Employee />} />
         <Route path="/employee/:personnelNumber/deductions" element={ <EmployeeDeductions /> } />
+        <Route path="/employee/:personnelNumber/timesheet" element={ <Timesheet /> } />
       </Routes>
     </BrowserRouter>
     </>
