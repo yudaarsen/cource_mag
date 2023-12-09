@@ -5,6 +5,7 @@ import DocumentType from "./catalog/DocumentType";
 import Account from "./catalog/Account";
 import Deduction from "./catalog/Deduction";
 import Employee from "./catalog/Employee";
+import EmployeeDeductions from "./catalog/EmployeeDeductions";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/accounts" element={ <Account /> } />
         <Route path="/deductions" element={ <Deduction /> } />
         <Route path="/employees" element={ <Employee />} />
+        <Route path="/employee/:personnelNumber/deductions" element={ <EmployeeDeductions /> } />
       </Routes>
     </BrowserRouter>
     </>

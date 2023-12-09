@@ -165,11 +165,22 @@ function Row(props) {
         action = <ActionCreateButton handleCreate={createHandler} setBlur={() => null} />
     }
 
+    const actions = [];
+    actions.push(action);
+    if(!props.create) {
+        actions.push(
+            <a href={'/employee/' + props.data.personnelNumber + '/deductions'} role='button' aria-pressed="true" className='btn btn-info m-2'>
+                Вычеты
+            </a>
+        );
+        actions.push(<button type="button" className='btn btn-dark'>Табель</button>);
+    }
+
     return (
         <tr name={"tb_row_" + props.data.personnelNumber}>
             {columns}
             <td className="text-center">
-                {action}
+                {actions}
             </td>
         </tr>
     )
@@ -266,7 +277,7 @@ export default function Employee() {
                     <th>Телефон</th>
                     <th>Email</th>
                     <th>Зарплата</th>
-                    <th>Действия</th>
+                    <th className='col-2'>Действия</th>
                 </tr>
             </thead>
             <tbody className="align-middle">

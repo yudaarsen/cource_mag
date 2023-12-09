@@ -362,7 +362,55 @@ export async function deleteEmployee(personnelNumber) {
         method: "DELETE"
     });
     if(!response.ok) {
-        if(response.status === 400) {
+        if(response.status === 400 || response.status === 500) {
+            const message = await response.json();
+            alert('Произошла ошибка при выполнении запроса:\n' + message.message);
+        }
+        return false;
+    }
+    return true;
+}
+
+// Employee deductions
+
+export async function getEmployeeDeductions(personnelNumber, setter) {
+    const employeeDeductions = await fetch(BASE_URL + '/employee/' + personnelNumber + '/deductions', CONTENT_TYPE)
+        .then((response) => response.json());
+    setter(employeeDeductions);
+    return employeeDeductions;
+}
+
+export async function createEmployeeDeduction(personnelNumber, deduction) {
+    if(!personnelNumber || !deduction) {
+        alert('Заполните данные!');
+        return;
+    }
+
+    let body = {
+        code: deduction.code,
+        rate: deduction.rate
+    };
+
+    const response = await fetch(BASE_URL + '/employee/' + personnelNumber + '/deduction', {
+        ...CONTENT_TYPE,
+        method: "POST",
+        body: JSON.stringify(body)
+    });
+    if(response.status === 400 || response.status == 409) {
+        const message = await response.json();
+        alert('Произошла ошибка при выполнении запроса:\n' + message.message);
+    } else if(!response.ok) {
+        alert('Произошла ошибка при создании вычета сотрудника');
+    }
+}
+
+export async function deleteEmployeeDeduction(personnelNumber, code) {
+    const response = await fetch(BASE_URL + '/employee/' + personnelNumber + '/deduction/' + code, {
+        ...CONTENT_TYPE,
+        method: "DELETE"
+    });
+    if(!response.ok) {
+        if(response.status === 400 || response.status === 500) {
             const message = await response.json();
             alert('Произошла ошибка при выполнении запроса:\n' + message.message);
         }
