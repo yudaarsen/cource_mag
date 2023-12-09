@@ -46,4 +46,9 @@ public interface FunctionDao {
             "WHERE department.id = :id")
     @RegisterConstructorMapper(Function.class)
     List<Function> getFunctionsForDepartment(@BindMethods final Department department) throws Exception;
+
+    @SqlQuery("SELECT function.id AS fid, function.name AS fname, department.id AS did, department.name AS dname " +
+            "FROM function INNER JOIN department ON function.department_id = department.id")
+    @UseRowMapper(FunctionRowMapper.class)
+    List<Function> getFunctions() throws Exception;
 }

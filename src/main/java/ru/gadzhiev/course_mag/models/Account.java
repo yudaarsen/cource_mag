@@ -30,6 +30,7 @@ public record Account(
         Account parent
 )
 {
+    public static final String ACCOUNT_00 = "0000000000";
     public static final String ACCOUNT_20 = "2000000000";
     public static final String ACCOUNT_26 = "2600000000";
     public static final String ACCOUNT_51 = "5100000000";

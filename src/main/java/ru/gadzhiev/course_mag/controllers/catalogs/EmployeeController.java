@@ -276,14 +276,10 @@ public class EmployeeController {
 
     @GetMapping(path = "/employee/{id}/timesheet")
     @ResponseStatus(code = HttpStatus.OK)
-    public List<Timesheet> findEmployeeTimesheet(@PathVariable("id") @Min(1) final int personnelNumber,
-                                                 @RequestParam("year") @Min(1991) @Max(9999) final int year,
-                                                 @RequestParam("month") @Min(1) @Max(12) final int month) throws RestApiException {
+    public List<Timesheet> findEmployeeTimesheet(@PathVariable("id") @Min(1) final int personnelNumber) throws RestApiException {
         try {
             return employeeService.findEmployeeTimesheet(
-                    new Employee(personnelNumber, null, null, null, null, null, null, 0),
-                    year,
-                    month
+                    new Employee(personnelNumber, null, null, null, null, null, null, 0)
             );
         } catch (Exception e) {
             logger.error("Error while getting timesheet", e);

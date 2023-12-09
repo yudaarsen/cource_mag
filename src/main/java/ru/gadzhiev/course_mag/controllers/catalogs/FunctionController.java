@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.gadzhiev.course_mag.controllers.exceptions.RestApiException;
@@ -100,9 +101,10 @@ public class FunctionController {
 
     @GetMapping(path = "/functions")
     @ResponseStatus(code = HttpStatus.OK)
-    public List<Function> getFunctionsForDepartment(@RequestParam("department") @NotNull @Min(1) int departmentId) throws RestApiException {
+    public List<Function> getFunctions(@RequestParam("department") @Nullable @Min(1) Integer departmentId) throws RestApiException {
         try {
-            return functionService.findAllForDepartment(new Department(departmentId, null));
+            int department = departmentId == null ? 0 : departmentId;
+            return functionService.findAllForDepartment(new Department(department, null));
         } catch (Exception e) {
             logger.error("Error while getting functions for dep: " + departmentId , e);
             throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while getting function");

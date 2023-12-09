@@ -11,6 +11,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DocumentServiceImpl implements DocumentService {
@@ -28,15 +29,17 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public int deleteDocumentType(DocumentType documentType) throws Exception {
-        int result = jdbi.withExtension(DocumentTypeDao.class, extension -> extension.delete(documentType));
-        if(result > 0)
-            return result;
-        throw new IllegalArgumentException("Document type does not exist");
+        if(documentType.code().equals(DocumentType.TYPE_REVERSE))
+            throw new IllegalArgumentException("Type " + DocumentType.TYPE_REVERSE +  " cannot be deleted!");
+        return jdbi.withExtension(DocumentTypeDao.class, extension -> extension.delete(documentType));
     }
 
     @Override
     public List<DocumentType> findAllDocumentTypes() throws Exception {
-        return jdbi.withExtension(DocumentTypeDao.class, DocumentTypeDao::getAll);
+        List<DocumentType> documentTypes = jdbi.withExtension(DocumentTypeDao.class, DocumentTypeDao::getAll);
+        return documentTypes.stream()
+                .filter(documentType -> !documentType.code().equals(DocumentType.TYPE_REVERSE))
+                .collect(Collectors.toList());
     }
 
     @Override

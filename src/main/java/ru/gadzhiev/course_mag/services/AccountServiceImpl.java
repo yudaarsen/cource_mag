@@ -21,10 +21,16 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public int delete(Account account) throws Exception {
-        int result = jdbi.withExtension(AccountDao.class, extension -> extension.delete(account));
-        if(result > 0)
-            return result;
-        throw new IllegalArgumentException("Account does not exist: " + account.code());
+        if(account.code().equals(Account.ACCOUNT_00)
+            || account.code().equals(Account.ACCOUNT_20)
+            || account.code().equals(Account.ACCOUNT_26)
+            || account.code().equals(Account.ACCOUNT_51)
+            || account.code().equals(Account.ACCOUNT_68)
+            || account.code().equals(Account.ACCOUNT_70)
+            || account.code().equals(Account.ACCOUNT_69)
+        )
+            throw new IllegalArgumentException("Account " + account.code() + " cannot be deleted!");
+        return jdbi.withExtension(AccountDao.class, extension -> extension.delete(account));
     }
 
     @Override

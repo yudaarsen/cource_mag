@@ -80,6 +80,23 @@ public interface DocumentDao {
         }
     }
 
+    class DocumentHeaderRowMapper implements RowMapper<Document> {
+        @Override
+        public Document map(ResultSet rs, StatementContext ctx) throws SQLException {
+            return new Document(
+                    rs.getInt("id"),
+                    new DocumentType(
+                            rs.getString("type_id"),
+                            rs.getString("type_name")
+                    ),
+                    rs.getDate("posting_date"),
+                    rs.getString("note"),
+                    null,
+                    rs.getInt("reverse_document")
+            );
+        }
+    }
+
     @SqlQuery("INSERT INTO document VALUES (:id, UPPER(:documentType.code), :postingDate, :note, :reverseDocument) RETURNING *")
     @UseRowMapper(DocumentRowMapper.class)
     Document create(@BindMethods final Document document);
@@ -125,8 +142,14 @@ public interface DocumentDao {
     @SqlQuery("SELECT nextval(pg_get_serial_sequence('document', 'id'))")
     int getNextDocumentId();
 
-    @SqlQuery("SELECT * FROM document")
-    @UseRowMapper(DocumentRowMapper.class)
+    @SqlQuery("""
+        SELECT document.*
+            , type.name AS "type_name"
+        FROM document
+            LEFT JOIN document_type AS type
+                ON document.type_id = type.code
+    """)
+    @UseRowMapper(DocumentHeaderRowMapper.class)
     List<Document> getDocuments();
 
     @SqlUpdate("UPDATE document SET reverse_document = :reverseDocument.id WHERE id = :document.id")

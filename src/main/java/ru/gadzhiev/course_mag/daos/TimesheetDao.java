@@ -47,7 +47,7 @@ public interface TimesheetDao {
     @SqlUpdate("DELETE FROM timesheet WHERE personnel_number = :employee.personnelNumber AND year = :year AND month = :month AND day = :day")
     int delete(@BindMethods final Timesheet timesheet);
 
-    @SqlQuery("SELECT * FROM timesheet WHERE personnel_number = :personnelNumber AND year = :year AND month = :month")
+    @SqlQuery("SELECT * FROM timesheet WHERE personnel_number = :personnelNumber")
     @UseRowMapper(TimesheetRowMapper.class)
-    List<Timesheet> getEmployeeTimesheet(@BindMethods final Employee employee, @Bind final int year, @Bind final int month);
+    List<Timesheet> getEmployeeTimesheet(@BindMethods final Employee employee);
 }
