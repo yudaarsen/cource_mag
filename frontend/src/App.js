@@ -10,6 +10,7 @@ import Timesheet from "./catalog/Timesheet";
 import Documents from "./document/Documents";
 import DocumentPage from "./document/DocumentPage";
 import Main from "./menu/Main";
+import Osv from "./reports/Osv";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/document" element={ <DocumentPage create={true} /> } />
         <Route path="/document/:id" element={ <DocumentPage /> } />
         <Route path="/" element={ <Main /> } />
+        <Route path="/report/osv" element={ <Osv /> } />
       </Routes>
     </BrowserRouter>
     </>

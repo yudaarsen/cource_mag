@@ -541,3 +541,11 @@ export async function getPayment(personnelNumber) {
         .then((response) => response.json());
     return payment;
 }
+
+// Reports
+
+export async function getOsv(from, to) {
+    const osv = await fetch(BASE_URL + '/report/osv?from=' + from + '&to=' + to, CONTENT_TYPE)
+        .then((response) => response.json());
+    return osv;
+}
