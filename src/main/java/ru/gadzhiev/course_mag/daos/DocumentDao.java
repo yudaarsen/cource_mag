@@ -16,73 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
-/*
-WITH RECURSIVE consts (date_from, date_to) AS (VALUES (date '2023-11-01', date '2023-11-30'))
-, osv AS (
-	SELECT dp.account_id
-		, SUM(CASE WHEN dp.pos_type = 'D' THEN dp.amount ELSE 0 END) AS debit
-		, SUM(CASE WHEN dp.pos_type = 'C' THEN dp.amount ELSE 0 END) AS credit
-	FROM document_position AS dp
-		INNER JOIN document AS d
-			ON dp.document_id = d.id
-		CROSS JOIN consts
-	WHERE d.reverse_document IS NULL
-		AND d.type_id != 'REVE'
-		AND d.posting_date BETWEEN date_from AND date_to
-	GROUP BY account_id
-), rec_osv AS (
-	SELECT parent_id AS account_id
-		, SUM(debit) AS debit
-		, SUM(credit) AS credit
-	FROM osv
-		INNER JOIN account
-			ON osv.account_id = account.code
-	WHERE parent_id IS NOT NULL
-	GROUP BY parent_id
-
-	UNION ALL
-
-	SELECT parent_id AS account_id
-		, SUM(debit) OVER (PARTITION BY parent_id) AS debit
-		, SUM(credit) OVER (PARTITION BY parent_id) AS credit
-	FROM rec_osv
-		INNER JOIN account
-			ON rec_osv.account_id = account.code
-	WHERE parent_id IS NOT NULL
-)
-SELECT account_id
-	, account.name
-	, debit
-	, credit
-FROM (
-	SELECT account_id
-		, SUM(debit) AS debit
-		, SUM(credit) AS credit
-	FROM (
-		SELECT *
-		FROM osv
-
-		UNION ALL
-
-		SELECT *
-		FROM rec_osv
-
-		UNION ALL
-
-		SELECT code AS account_id
-		, 0
-		, 0
-		FROM account
-		ORDER BY account_id
-	) AS totals
-	GROUP BY account_id
-) AS grouped_totals
-INNER JOIN account
-	ON account.code = grouped_totals.account_id
-
- */
-
 public interface DocumentDao {
 
     class DocumentRowReducer implements LinkedHashMapRowReducer<Integer, Document> {
@@ -147,6 +80,23 @@ public interface DocumentDao {
         }
     }
 
+    class DocumentHeaderRowMapper implements RowMapper<Document> {
+        @Override
+        public Document map(ResultSet rs, StatementContext ctx) throws SQLException {
+            return new Document(
+                    rs.getInt("id"),
+                    new DocumentType(
+                            rs.getString("type_id"),
+                            rs.getString("type_name")
+                    ),
+                    rs.getDate("posting_date"),
+                    rs.getString("note"),
+                    null,
+                    rs.getInt("reverse_document")
+            );
+        }
+    }
+
     @SqlQuery("INSERT INTO document VALUES (:id, UPPER(:documentType.code), :postingDate, :note, :reverseDocument) RETURNING *")
     @UseRowMapper(DocumentRowMapper.class)
     Document create(@BindMethods final Document document);
@@ -192,8 +142,14 @@ public interface DocumentDao {
     @SqlQuery("SELECT nextval(pg_get_serial_sequence('document', 'id'))")
     int getNextDocumentId();
 
-    @SqlQuery("SELECT * FROM document")
-    @UseRowMapper(DocumentRowMapper.class)
+    @SqlQuery("""
+        SELECT document.*
+            , type.name AS "type_name"
+        FROM document
+            LEFT JOIN document_type AS type
+                ON document.type_id = type.code
+    """)
+    @UseRowMapper(DocumentHeaderRowMapper.class)
     List<Document> getDocuments();
 
     @SqlUpdate("UPDATE document SET reverse_document = :reverseDocument.id WHERE id = :document.id")

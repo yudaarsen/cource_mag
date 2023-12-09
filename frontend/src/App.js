@@ -7,6 +7,9 @@ import Deduction from "./catalog/Deduction";
 import Employee from "./catalog/Employee";
 import EmployeeDeductions from "./catalog/EmployeeDeductions";
 import Timesheet from "./catalog/Timesheet";
+import Documents from "./document/Documents";
+import DocumentPage from "./document/DocumentPage";
+import Main from "./menu/Main";
 
 function App() {
   return (
@@ -21,6 +24,10 @@ function App() {
         <Route path="/employees" element={ <Employee />} />
         <Route path="/employee/:personnelNumber/deductions" element={ <EmployeeDeductions /> } />
         <Route path="/employee/:personnelNumber/timesheet" element={ <Timesheet /> } />
+        <Route path="/documents" element={ <Documents /> } />
+        <Route path="/document" element={ <DocumentPage create={true} /> } />
+        <Route path="/document/:id" element={ <DocumentPage /> } />
+        <Route path="/" element={ <Main /> } />
       </Routes>
     </BrowserRouter>
     </>

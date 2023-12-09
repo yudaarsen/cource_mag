@@ -486,3 +486,58 @@ export async function deleteTimesheet(personnelNumber, timesheet) {
     }
     return true;
 }
+
+// Document 
+
+export async function getDocuments(setter) {
+    const documents = await fetch(BASE_URL + '/documents', CONTENT_TYPE)
+        .then((response) => response.json());
+    documents.sort((a, b) => a.id > b.id ? -1 : 1);
+    setter(documents);
+    return documents;
+}
+
+export async function getDocument(documentId) {
+    const document = await fetch(BASE_URL + '/document/' + documentId, CONTENT_TYPE)
+        .then((response) => response.json());
+    return document;
+}
+
+export async function reverseDocument(documentId, date) {
+    const response = await fetch(BASE_URL + '/document/' +documentId + '/reverse?posting_date=' + date, {
+        ...CONTENT_TYPE,
+        method: "POST"
+    });
+    if(response.status === 400 || response.status == 409) {
+        const message = await response.json();
+        alert('Произошла ошибка при выполнении запроса:\n' + message.message);
+    } else if(!response.ok) {
+        alert('Произошла ошибка при сторнировании документа');
+    }
+}
+
+export async function createDocument(document) {
+    if(!document) {
+        alert('Заполните данные!');
+        return;
+    }
+
+    const response = await fetch(BASE_URL + '/document', {
+        ...CONTENT_TYPE,
+        method: "POST",
+        body: JSON.stringify(document)
+    });
+    if(response.status === 400 || response.status == 409) {
+        const message = await response.json();
+        alert('Произошла ошибка при выполнении запроса:\n' + message.message);
+    } else if(!response.ok) {
+        alert('Произошла ошибка при создании документа');
+    }
+    return response.ok;
+}
+
+export async function getPayment(personnelNumber) {
+    const payment = await fetch(BASE_URL + '/document/payment?id=' + personnelNumber, CONTENT_TYPE)
+        .then((response) => response.json());
+    return payment;
+}

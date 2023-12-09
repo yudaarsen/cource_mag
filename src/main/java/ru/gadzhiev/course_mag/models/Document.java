@@ -14,7 +14,7 @@ public record Document(
         @Valid
         DocumentType documentType,
         @NotNull(groups = { DocumentValidation.class })
-        @JsonFormat(pattern = "yyyy-MM-dd")
+        @JsonFormat(timezone="Europe/Moscow", pattern = "yyyy-MM-dd")
         Date postingDate,
         @Size(max = 250, groups = { DocumentValidation.class })
         String note,

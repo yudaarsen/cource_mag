@@ -1,5 +1,6 @@
 package ru.gadzhiev.course_mag.daos;
 
+import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.BindMethods;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;

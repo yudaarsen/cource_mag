@@ -174,7 +174,7 @@ function Row(props) {
             </a>
         );
         actions.push(
-            <a href={'/employee/' + props.data.personnelNumber + '/timesheet'} role='button' aria-pressed="true" className='btn btn-dark m-2'>
+            <a href={'/employee/' + props.data.personnelNumber + '/timesheet'} role='button' aria-pressed="true" className='btn btn-dark'>
                 Табель
             </a>
         );
