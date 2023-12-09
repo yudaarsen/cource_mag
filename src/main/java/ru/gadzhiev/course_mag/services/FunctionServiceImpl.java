@@ -39,6 +39,8 @@ public class FunctionServiceImpl implements FunctionService {
 
     @Override
     public List<Function> findAllForDepartment(Department department) throws Exception {
+        if(department.id() == 0)
+            return jdbi.withExtension(FunctionDao.class, FunctionDao::getFunctions);
         return jdbi.withExtension(FunctionDao.class, extension -> extension.getFunctionsForDepartment(department));
     }
 

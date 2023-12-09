@@ -77,6 +77,13 @@ export async function getFunctions(departmentId, setter) {
     return functions;
 }
 
+export async function getAllFunctions(setter) {
+    const functions = await fetch(BASE_URL + '/functions', CONTENT_TYPE)
+        .then((response) => response.json());
+    setter(functions);
+    return functions;
+}
+
 export async function createFunction(name, departmentId) {
     const response = await fetch(BASE_URL + '/function', {
         ...CONTENT_TYPE,
@@ -280,8 +287,86 @@ export async function deleteDeduction(code) {
 // Employee
 
 export async function getEmployees(setter) {
-    const deductions = await fetch(BASE_URL + '/deductions', CONTENT_TYPE)
+    const employees = await fetch(BASE_URL + '/employees', CONTENT_TYPE)
         .then((response) => response.json());
-    setter(deductions);
-    return deductions;
+    setter(employees);
+    return employees;
+}
+
+export async function createEmployee(employee) {
+    if(!employee) {
+        alert('Заполните данные сотрудника!');
+        return;
+    }
+
+    let body = {
+        personnelNumber : employee.personnelNumber,
+        firstName : employee.firstName,
+        lastName : employee.lastName,
+        middleName : employee.middleName,
+        email : employee.email,
+        phone : employee.phone,
+        salary : employee.salary,
+        function : {
+            id : employee.function.id
+        }
+    };
+
+    const response = await fetch(BASE_URL + '/employee', {
+        ...CONTENT_TYPE,
+        method: "POST",
+        body: JSON.stringify(body)
+    });
+    if(response.status === 409 || response.status === 400) {
+        const message = await response.json();
+        alert('Произошла ошибка при выполнении запроса:\n' + message.message);
+    } else if(!response.ok) {
+        alert('Произошла ошибка при создании сотрудника');
+    }
+}
+
+export async function updateEmployee(employee) {
+    if(!employee) {
+        alert('Заполните данные сотрудника!');
+        return;
+    }
+
+    let body = {
+        firstName : employee.firstName,
+        lastName : employee.lastName,
+        middleName : employee.middleName,
+        email : employee.email,
+        phone : employee.phone,
+        salary : employee.salary,
+        function : {
+            id : employee.function.id
+        }
+    };
+
+    const response = await fetch(BASE_URL + '/employee/' + employee.personnelNumber, {
+        ...CONTENT_TYPE,
+        method: "PUT",
+        body: JSON.stringify(body)
+    });
+    if(response.status === 400) {
+        const message = await response.json();
+        alert('Произошла ошибка при выполнении запроса:\n' + message.message);
+    } else if(!response.ok) {
+        alert('Произошла ошибка при сохранении сотрудника');
+    }
+}
+
+export async function deleteEmployee(personnelNumber) {
+    const response = await fetch(BASE_URL + '/employee/' + personnelNumber, {
+        ...CONTENT_TYPE,
+        method: "DELETE"
+    });
+    if(!response.ok) {
+        if(response.status === 400) {
+            const message = await response.json();
+            alert('Произошла ошибка при выполнении запроса:\n' + message.message);
+        }
+        return false;
+    }
+    return true;
 }
