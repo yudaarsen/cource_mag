@@ -9,6 +9,7 @@ import ru.gadzhiev.course_mag.models.DocumentType;
 import ru.gadzhiev.course_mag.models.reports.BalanceRow;
 import ru.gadzhiev.course_mag.models.reports.Osv;
 import ru.gadzhiev.course_mag.models.reports.OsvPosition;
+import ru.gadzhiev.course_mag.models.reports.VedRow;
 
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -121,6 +122,11 @@ public class ReportServiceImpl implements ReportService {
                 account_76[3] + account_68[3] + account_69[3] + account_70[3])
         );
         return result;
+    }
+
+    @Override
+    public List<VedRow> getVed(Date fromDate, Date toDate) {
+        return jdbi.withExtension(ReportDao.class, extension -> extension.getVed(fromDate, toDate));
     }
 
     private int[] getAccountData(final Osv osv, String accountCode) {

@@ -12,6 +12,7 @@ import DocumentPage from "./document/DocumentPage";
 import Main from "./menu/Main";
 import Osv from "./reports/Osv";
 import Balance from "./reports/Balance";
+import Ved from "./reports/Ved";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
         <Route path="/" element={ <Main /> } />
         <Route path="/report/osv" element={ <Osv /> } />
         <Route path="/report/balance" element={ <Balance /> } />
+        <Route path="/report/ved" element={ <Ved /> } />
       </Routes>
     </BrowserRouter>
     </>

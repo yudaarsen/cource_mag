@@ -14,6 +14,7 @@ import ru.gadzhiev.course_mag.models.DocumentType;
 import ru.gadzhiev.course_mag.models.reports.BalanceRow;
 import ru.gadzhiev.course_mag.models.reports.Osv;
 import ru.gadzhiev.course_mag.models.reports.OsvPosition;
+import ru.gadzhiev.course_mag.models.reports.VedRow;
 import ru.gadzhiev.course_mag.services.ReportService;
 
 import java.util.Date;
@@ -67,6 +68,24 @@ public class ReportController {
         catch (Exception e) {
             logger.error("Error while getting balance", e);
             throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while getting balance");
+        }
+    }
+
+    @GetMapping(path = "/report/ved")
+    @ResponseStatus(code = HttpStatus.OK)
+    public List<VedRow> getVed(@RequestParam("from") @DateTimeFormat(pattern = DATE_FORMAT) final Date fromDate,
+                                       @RequestParam("to") @DateTimeFormat(pattern = DATE_FORMAT) final Date toDate) throws RestApiException {
+        try {
+            if(fromDate.after(toDate))
+                throw new IllegalStateException("Illegal date");
+            return reportService.getVed(fromDate, toDate);
+        } catch (IllegalArgumentException e) {
+            logger.error(e.getMessage());
+            throw new RestApiException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        catch (Exception e) {
+            logger.error("Error while getting ved", e);
+            throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while getting ved");
         }
     }
 }

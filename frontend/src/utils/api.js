@@ -559,3 +559,9 @@ export async function getBalance(from, to) {
         .then((response) => response.json());
     return balance;
 }
+
+export async function getVed(from, to) {
+    const ved = await fetch(BASE_URL + '/report/ved?from=' + from + '&to=' + to, CONTENT_TYPE)
+        .then((response) => response.json());
+    return ved;
+}

@@ -269,7 +269,10 @@ export default function Employee() {
           <h1>Сотрудники</h1>
           <div>
             <span>Действия:</span>
-            <button type="button" className="m-3 btn btn-success" onClick={addRow}>Создать</button> 
+            <button type="button" className="m-3 btn btn-success" onClick={addRow}>Создать</button>
+            <a href={'/report/ved'} role='button' aria-pressed="true" className='btn btn-info'>
+                Расчетная ведомость
+            </a> 
           </div>     
           <table className="table">
             <thead>

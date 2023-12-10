@@ -9,6 +9,7 @@ import org.jdbi.v3.sqlobject.statement.UseRowMapper;
 import ru.gadzhiev.course_mag.models.Account;
 import ru.gadzhiev.course_mag.models.reports.OsvPosition;
 import ru.gadzhiev.course_mag.models.reports.OsvTotals;
+import ru.gadzhiev.course_mag.models.reports.VedRow;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -175,4 +176,32 @@ public interface ReportDao {
             """)
     @RegisterConstructorMapper(OsvTotals.class)
     OsvTotals getOsvTotals(@Bind final Date fromDate, @Bind final Date toDate, @Bind final String reverseType);
+
+    @SqlQuery(
+        """
+        WITH ved AS (
+            SELECT employee.personnel_number
+                , COUNT(employee.personnel_number) AS present
+            FROM employee
+                INNER JOIN timesheet
+                    ON employee.personnel_number = timesheet.personnel_number
+            WHERE timesheet.present = true
+                AND date (timesheet.year || '-' || timesheet.month || '-' || timesheet.day) >= :fromDate
+                AND date (timesheet.year || '-' || timesheet.month || '-' || timesheet.day) <= :toDate
+            GROUP BY employee.personnel_number
+        )
+        SELECT ved.personnel_number
+            , employee.last_name || ' ' || LEFT(employee.first_name, 1) || '.' || LEFT(employee.middle_name, 1) || '.' AS fio
+            , function.name AS fname
+            , employee.salary
+            , present
+        FROM ved
+            INNER JOIN employee
+                ON employee.personnel_number = ved.personnel_number
+            INNER JOIN function
+                ON employee.function_id = function.id;
+        """
+    )
+    @RegisterConstructorMapper(VedRow.class)
+    List<VedRow> getVed(@Bind final Date fromDate, @Bind final Date toDate);
 }

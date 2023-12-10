@@ -52,6 +52,12 @@ export default function Documents() {
             <a href={'/document'} role='button' aria-pressed="true" className='m-3 btn btn-success'>
                 Создать
             </a>
+            <a href={'/report/osv'} role='button' aria-pressed="true" className='btn btn-info'>
+                Оборотно-сальдовая ведомость
+            </a>
+            <a href={'/report/balance'} role='button' aria-pressed="true" className='btn m-3 btn-info'>
+                Баланс
+            </a>
             <div className="row mb-3">
                 <div className="col col-2">
                     <span>Дата сторнирования:</span>
