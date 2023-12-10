@@ -39,6 +39,3 @@ jar {
   }
 }
 
-shadowJar {
-  archiveBaseName.set('shadow')
-}
