@@ -11,6 +11,7 @@ import Documents from "./document/Documents";
 import DocumentPage from "./document/DocumentPage";
 import Main from "./menu/Main";
 import Osv from "./reports/Osv";
+import Balance from "./reports/Balance";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
         <Route path="/document/:id" element={ <DocumentPage /> } />
         <Route path="/" element={ <Main /> } />
         <Route path="/report/osv" element={ <Osv /> } />
+        <Route path="/report/balance" element={ <Balance /> } />
       </Routes>
     </BrowserRouter>
     </>

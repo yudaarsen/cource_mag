@@ -553,3 +553,9 @@ export async function getOsv(from, to) {
         .then((response) => response.json());
     return osv;
 }
+
+export async function getBalance(from, to) {
+    const balance = await fetch(BASE_URL + '/report/balance?from=' + from + '&to=' + to, CONTENT_TYPE)
+        .then((response) => response.json());
+    return balance;
+}

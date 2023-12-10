@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.gadzhiev.course_mag.controllers.catalogs.DeductionController;
 import ru.gadzhiev.course_mag.controllers.exceptions.RestApiException;
 import ru.gadzhiev.course_mag.models.DocumentType;
+import ru.gadzhiev.course_mag.models.reports.BalanceRow;
 import ru.gadzhiev.course_mag.models.reports.Osv;
 import ru.gadzhiev.course_mag.models.reports.OsvPosition;
 import ru.gadzhiev.course_mag.services.ReportService;
@@ -51,5 +52,21 @@ public class ReportController {
         }
     }
 
-
+    @GetMapping(path = "/report/balance")
+    @ResponseStatus(code = HttpStatus.OK)
+    public List<BalanceRow> getBalance(@RequestParam("from") @DateTimeFormat(pattern = DATE_FORMAT) final Date fromDate,
+                                       @RequestParam("to") @DateTimeFormat(pattern = DATE_FORMAT) final Date toDate) throws RestApiException {
+        try {
+            if(fromDate.after(toDate))
+                throw new IllegalStateException("Illegal date");
+            return reportService.getBalance(fromDate, toDate);
+        } catch (IllegalArgumentException e) {
+            logger.error(e.getMessage());
+            throw new RestApiException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        catch (Exception e) {
+            logger.error("Error while getting balance", e);
+            throw new RestApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while getting balance");
+        }
+    }
 }
