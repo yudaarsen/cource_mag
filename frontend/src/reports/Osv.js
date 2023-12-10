@@ -14,7 +14,9 @@ export default function Osv() {
             alert('Выберите период!');
             return;
         }
-        setData(await getOsv(from, to));
+        const osv = await getOsv(from, to);
+        osv.positions.sort((a, b) => a.account.code > b.account.code ? 1 : -1);
+        setData(osv);
     }
 
     const rows = [];
