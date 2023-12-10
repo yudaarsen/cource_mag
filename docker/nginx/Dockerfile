@@ -1,6 +1,7 @@
 FROM node:21-slim AS build
 WORKDIR /frontend
 COPY frontend .
+RUN npm install
 RUN npm run build .
 
 FROM nginx:stable-alpine3.17-slim
