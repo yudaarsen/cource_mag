@@ -32,3 +32,13 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+jar {
+  manifest {
+    attributes 'Main-Class': 'ru.gadzhiev.course_mag.CourseMagApplication'
+  }
+}
+
+shadowJar {
+  archiveBaseName.set('shadow')
+}
