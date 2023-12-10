@@ -5,6 +5,11 @@ services:
       dockerfile: ./docker/nginx/Dockerfile  
     ports:
       - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - main_net
+    hostname: frontend
 
   backend:
     build:
@@ -14,3 +19,30 @@ services:
       - "8080:8080"
     env_file:
       - .env
+    depends_on:
+      - database
+    networks:
+      - main_net
+    hostname: backend
+
+  database:
+    build:
+      context: .
+      dockerfile: ./docker/postgresql/Dockerfile
+    ports:
+      - "5432:5432"
+    env_file:
+      - .db_env
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+    networks:
+      - main_net
+    hostname: database
+
+volumes:
+  postgres_db:
+
+networks:
+  main_net:
+    driver: bridge
+
