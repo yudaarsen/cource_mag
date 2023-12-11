@@ -74,7 +74,7 @@ export default function Ved() {
                 <thead className='align-middle text-center'>
                     <th>
                         <b>
-                            Табльный номер
+                            Табельный номер
                         </b>
                     </th>
 
