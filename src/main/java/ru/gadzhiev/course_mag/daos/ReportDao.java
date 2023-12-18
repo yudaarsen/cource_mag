@@ -49,8 +49,8 @@ public interface ReportDao {
                 INNER JOIN document AS d
                     ON dp.document_id = d.id
               WHERE d.reverse_document IS NULL
-                AND d.type_id != 'REVE'
-                AND d.posting_date BETWEEN date '2023-12-01' AND date '2023-12-18'
+                AND d.type_id != :reverseType
+                AND d.posting_date BETWEEN :fromDate AND :toDate
               GROUP BY account_id
               ), rec_osv AS (
               SELECT parent_id AS account_id
