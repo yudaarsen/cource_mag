@@ -22,11 +22,13 @@ public interface ReportDao {
 
         @Override
         public OsvPosition map(ResultSet rs, StatementContext ctx) throws SQLException {
+            String parentCode = rs.getString("parent_id");
+            Account parent = parentCode == null ? null : new Account(parentCode, null, null);
             return new OsvPosition(
                     new Account(
                             rs.getString("account_id"),
                             rs.getString("name"),
-                            null
+                            parent
                     ),
                     0,
                     0,
@@ -40,67 +42,71 @@ public interface ReportDao {
 
     @SqlQuery("""
             WITH RECURSIVE osv AS (
-            SELECT dp.account_id
-            	, SUM(CASE WHEN dp.pos_type = 'D' THEN dp.amount ELSE 0 END) AS debit
-            	, SUM(CASE WHEN dp.pos_type = 'C' THEN dp.amount ELSE 0 END) AS credit
-            FROM document_position AS dp
-            	INNER JOIN document AS d
-            		ON dp.document_id = d.id
-            WHERE d.reverse_document IS NULL
-            	AND d.type_id != :reverseType
-            	AND d.posting_date BETWEEN :fromDate AND :toDate
-            GROUP BY account_id
-            ), rec_osv AS (
-            SELECT parent_id AS account_id
-            	, SUM(debit) AS debit
-            	, SUM(credit) AS credit
-            FROM osv
-            	INNER JOIN account
-            		ON osv.account_id = account.code
-            WHERE parent_id IS NOT NULL
-            GROUP BY parent_id
-                        
-            UNION ALL
-                        
-            SELECT parent_id AS account_id
-            	, SUM(debit) OVER (PARTITION BY parent_id) AS debit
-            	, SUM(credit) OVER (PARTITION BY parent_id) AS credit
-            FROM rec_osv
-            	INNER JOIN account
-            		ON rec_osv.account_id = account.code
-            WHERE parent_id IS NOT NULL
-            ), res_osv AS (
-            	SELECT account_id
-            	, account.name
-            	, debit
-            	, credit
-            	FROM (
-            	SELECT account_id
-            		, SUM(debit) AS debit
-            		, SUM(credit) AS credit
-            	FROM (
-            		SELECT *
-            		FROM osv
-                        
-            		UNION ALL
-                        
-            		SELECT *
-            		FROM rec_osv
-                        
-            		UNION ALL
-                        
-            		SELECT code AS account_id
-            		, 0
-            		, 0
-            		FROM account
-            		ORDER BY account_id
-            	) AS totals
-            	GROUP BY account_id
-            	) AS grouped_totals
-            	INNER JOIN account
-            	ON account.code = grouped_totals.account_id
-            )
-            SELECT * FROM res_osv;
+              SELECT dp.account_id
+                , SUM(CASE WHEN dp.pos_type = 'D' THEN dp.amount ELSE 0 END) AS debit
+                , SUM(CASE WHEN dp.pos_type = 'C' THEN dp.amount ELSE 0 END) AS credit
+              FROM document_position AS dp
+                INNER JOIN document AS d
+                    ON dp.document_id = d.id
+              WHERE d.reverse_document IS NULL
+                AND d.type_id != 'REVE'
+                AND d.posting_date BETWEEN date '2023-12-01' AND date '2023-12-18'
+              GROUP BY account_id
+              ), rec_osv AS (
+              SELECT parent_id AS account_id
+                , SUM(debit) AS debit
+                , SUM(credit) AS credit
+              FROM osv
+                INNER JOIN account
+                    ON osv.account_id = account.code
+              WHERE parent_id IS NOT NULL
+              GROUP BY parent_id
+                         
+              UNION ALL
+                         
+              SELECT parent_id AS account_id
+                , SUM(debit) OVER (PARTITION BY parent_id) AS debit
+                , SUM(credit) OVER (PARTITION BY parent_id) AS credit
+              FROM rec_osv
+                INNER JOIN account
+                    ON rec_osv.account_id = account.code
+              WHERE parent_id IS NOT NULL
+              ), res_osv AS (
+                SELECT account_id
+                , account.name
+                , debit
+                , credit
+                FROM (
+                SELECT account_id
+                    , SUM(debit) AS debit
+                    , SUM(credit) AS credit
+                FROM (
+                    SELECT *
+                    FROM osv
+                         
+                    UNION ALL
+                         
+                    SELECT *
+                    FROM rec_osv
+                         
+                    UNION ALL
+                         
+                    SELECT code AS account_id
+                    , 0
+                    , 0
+                    FROM account
+                    ORDER BY account_id
+                ) AS totals
+                GROUP BY account_id
+                ) AS grouped_totals
+                INNER JOIN account
+                ON account.code = grouped_totals.account_id
+              )
+              SELECT res_osv.*
+            , account.parent_id AS "parent_id"
+            FROM res_osv
+                LEFT JOIN account
+                    ON res_osv.account_id = account.code;
             """)
     @UseRowMapper(OsvPositionRowMapper.class)
     List<OsvPosition> getOsv(@Bind final Date fromDate, @Bind final Date toDate, @Bind final String reverseType);

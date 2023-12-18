@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.gadzhiev.course_mag.daos.AccountDao;
 import ru.gadzhiev.course_mag.models.Account;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -21,15 +22,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public int delete(Account account) throws Exception {
-        if(account.code().equals(Account.ACCOUNT_00)
-            || account.code().equals(Account.ACCOUNT_20)
-            || account.code().equals(Account.ACCOUNT_26)
-            || account.code().equals(Account.ACCOUNT_51)
-            || account.code().equals(Account.ACCOUNT_68)
-            || account.code().equals(Account.ACCOUNT_70)
-            || account.code().equals(Account.ACCOUNT_69)
-            || account.code().equals(Account.ACCOUNT_76)
-        )
+        if(Arrays.asList(Account.ACCOUNTS).contains(account.code()))
             throw new IllegalArgumentException("Account " + account.code() + " cannot be deleted!");
         return jdbi.withExtension(AccountDao.class, extension -> extension.delete(account));
     }
