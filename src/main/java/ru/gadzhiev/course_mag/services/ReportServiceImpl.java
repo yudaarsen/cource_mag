@@ -73,11 +73,6 @@ public class ReportServiceImpl implements ReportService {
         double[] account_20 = getAccountData(osv, Account.ACCOUNT_20);
         double[] account_43 = getAccountData(osv, Account.ACCOUNT_43);
         double[] account_51 = getAccountData(osv, Account.ACCOUNT_51);
-        double[] account_60 = getAccountData(osv, Account.ACCOUNT_60);
-        double[] account_62 = getAccountData(osv, Account.ACCOUNT_62);
-        double[] account_68 = getAccountData(osv, Account.ACCOUNT_68);
-        double[] account_69 = getAccountData(osv, Account.ACCOUNT_69);
-        double[] account_70 = getAccountData(osv, Account.ACCOUNT_70);
         double[] account_76 = getAccountData(osv, Account.ACCOUNT_76);
         double[] account_80 = getAccountData(osv, Account.ACCOUNT_80);
         double[] account_84 = getAccountData(osv, Account.ACCOUNT_84);
@@ -89,7 +84,15 @@ public class ReportServiceImpl implements ReportService {
         double creditEnd_1520 = 0;
 
         for(OsvPosition position : osv.positions()) {
-
+            if(position.getAccount().code().equals(Account.ACCOUNT_601)
+                || position.getAccount().code().equals(Account.ACCOUNT_602)
+                || position.getAccount().code().equals(Account.ACCOUNT_621)
+                || position.getAccount().code().equals(Account.ACCOUNT_622)) {
+                debitStart_1230 += position.getStartDebit();
+                debitEnd_1230 += position.getEndDebit();
+                creditStart_1520 += position.getStartCredit();
+                creditEnd_1520 += position.getEndCredit();
+            }
         }
 
         List<BalanceRow> result = new ArrayList<>();

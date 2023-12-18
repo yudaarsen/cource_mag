@@ -39,7 +39,11 @@ public record Account(
     public static final String ACCOUNT_43 = "4300000000";
     public static final String ACCOUNT_51 = "5100000000";
     public static final String ACCOUNT_60 = "6000000000";
+    public static final String ACCOUNT_601 = "6010000000";
+    public static final String ACCOUNT_602 = "6020000000";
     public static final String ACCOUNT_62 = "6200000000";
+    public static final String ACCOUNT_621 = "6210000000";
+    public static final String ACCOUNT_622 = "6220000000";
     public static final String ACCOUNT_68 = "6800000000";
     public static final String ACCOUNT_69 = "6900000000";
     public static final String ACCOUNT_70 = "7000000000";
