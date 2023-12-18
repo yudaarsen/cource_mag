@@ -83,45 +83,50 @@ public class ReportServiceImpl implements ReportService {
         double[] account_84 = getAccountData(osv, Account.ACCOUNT_84);
         double[] account_99 = getAccountData(osv, Account.ACCOUNT_99);
 
+        double debitStart_1230 = 0;
+        double debitEnd_1230 = 0;
+        double creditStart_1520 = 0;
+        double creditEnd_1520 = 0;
+
+        for(OsvPosition position : osv.positions()) {
+
+        }
+
         List<BalanceRow> result = new ArrayList<>();
         result.add(new BalanceRow("Нематериальные активы", 1110, 0, 0));
         result.add(new BalanceRow("Результаты исследовательских работ и разработок", 1120, 0, 0));
         result.add(new BalanceRow("Нематериальные поисковые активы", 1130, 0, 0));
         result.add(new BalanceRow("Материальные поисковые активы", 1140, 0, 0));
         result.add(new BalanceRow("Основные средства", 1150,
-                (int)(account_01[0] + account_02[0]) / 1000,
-                (int)(account_01[2] + account_02[2]) / 1000));
+                (int)(account_01[0] - account_02[1]) / 1000,
+                (int)(account_01[2] - account_02[3]) / 1000));
         result.add(new BalanceRow("Доходные вложения в материальные ценности", 1160, 0, 0));
         result.add(new BalanceRow("Финансовые вложения", 1170, 0, 0));
         result.add(new BalanceRow("Отложенные налоговые активы", 1180, 0, 0));
         result.add(new BalanceRow("Иные внеоборотные активы", 1190, 0, 0));
         result.add(new BalanceRow("Итого по разделу I", 1100,
-                (int)(account_01[0] + account_02[0]) / 1000,
-                (int)(account_01[2] + account_02[2]) / 1000));
+                (int)(account_01[0] - account_02[1]) / 1000,
+                (int)(account_01[2] - account_02[3]) / 1000));
 
         result.add(new BalanceRow("Запасы", 1210,
                 (int)(account_10[0] + account_20[0] + account_43[0]) / 1000,
                 (int)(account_01[2] + account_02[2] + account_43[2]) / 1000));
         result.add(new BalanceRow("НДС по приобретенным ценностям", 1220, 0, 0));
         result.add(new BalanceRow("Дебиторская задолженность", 1230,
-                (int)(account_60[0] + account_62[0] + account_68[0] + account_69[0] + account_70[0]) / 1000,
-                (int)(account_60[2] + account_62[2] + account_68[2] + account_69[2] + account_70[2]) / 1000));
+                (int)(debitStart_1230) / 1000,
+                (int)(debitEnd_1230) / 1000));
         result.add(new BalanceRow("Финансовые вложения, исключая денежные", 1240, 0, 0));
         result.add(new BalanceRow("Денежные средства и эквиваленты", 1250,
                 (int)(account_51[0]) / 1000,
                 (int)(account_51[2]) / 1000));
         result.add(new BalanceRow("Иные оборотные активы", 1260, 0, 0));
         result.add(new BalanceRow("Итого по разделу II", 1200,
-                (int)(account_10[0] + account_20[0] + account_43[0] + account_60[0] + account_62[0] + account_68[0] + account_69[0] + account_70[0]
-                        + account_51[0]) / 1000,
-                (int)(account_10[2] + account_20[2] + account_43[2] + account_60[2] + account_62[2] + account_68[2] + account_69[2] + account_70[2]
-                        + account_51[2]) / 1000)
+                (int)(account_10[0] + account_20[0] + account_43[0] + debitStart_1230 + account_51[0]) / 1000,
+                (int)(account_10[2] + account_20[2] + account_43[2] + debitEnd_1230 + account_51[2]) / 1000)
         );
         result.add(new BalanceRow("Баланс", 1600,
-                (int)(account_10[0] + account_20[0] + account_43[0] + account_60[0] + account_62[0] + account_68[0] + account_69[0] + account_70[0]
-                        + account_51[0] + account_01[0] + account_02[0]) / 1000,
-                (int)(account_10[2] + account_20[2] + account_43[2] + account_60[2] + account_62[2] + account_68[2] + account_69[2] + account_70[2]
-                        + account_51[2] + account_01[2] + account_02[2]) / 1000)
+                (int)(account_10[0] + account_20[0] + account_43[0] + debitStart_1230 + account_51[0] + account_01[0] - account_02[1]) / 1000,
+                (int)(account_10[2] + account_20[2] + account_43[2] + debitEnd_1230 + account_51[2] + account_01[2] - account_02[3]) / 1000)
         );
 
         result.add(new BalanceRow("Уставный капитал", 1310,
@@ -150,21 +155,19 @@ public class ReportServiceImpl implements ReportService {
 
         result.add(new BalanceRow("Заёмные средства", 1510, 0, 0));
         result.add(new BalanceRow("Кредиторская задолженность", 1520,
-                (int)(account_60[1] + account_62[1] + account_68[1] + account_69[1] + account_70[1]) / 1000,
-                (int)(account_60[3] + account_62[3] + account_68[3] + account_69[3] + account_70[3]) / 1000)
+                (int)(creditStart_1520) / 1000,
+                (int)(creditEnd_1520) / 1000)
         );
         result.add(new BalanceRow("Доходы будущих периодов", 1530, 0, 0));
         result.add(new BalanceRow("Оценочные обязательства", 1540, 0, 0));
         result.add(new BalanceRow("Прочие краткосрочные обязательства", 1550, 0, 0));
         result.add(new BalanceRow("Итого по разделу V", 1500,
-                (int)(account_60[1] + account_62[1] + account_68[1] + account_69[1] + account_70[1]) / 1000,
-                (int)(account_60[3] + account_62[3] + account_68[3] + account_69[3] + account_70[3]) / 1000)
+                (int)(creditStart_1520) / 1000,
+                (int)(creditEnd_1520) / 1000)
         );
         result.add(new BalanceRow("БАЛАНС", 1700,
-                (int)(account_80[1] + account_84[1] + account_99[1] + account_76[1] + account_60[1] + account_62[1] + account_68[1]
-                        + account_69[1] + account_70[1]) / 1000,
-                (int)(account_80[3] + account_84[3] + account_99[3] + account_76[3] + account_60[3] + account_62[3] + account_68[3]
-                        + account_69[3] + account_70[3]) / 1000)
+                (int)(account_80[1] + account_84[1] + account_99[1] + account_76[1] + creditStart_1520) / 1000,
+                (int)(account_80[3] + account_84[3] + account_99[3] + account_76[3] + creditEnd_1520) / 1000)
         );
         return result;
     }
