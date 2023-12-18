@@ -37,9 +37,9 @@ public class ReportServiceImpl implements ReportService {
                 }
             }
             if(pos.getStartDebit() + pos.getPeriodDebit() > pos.getStartCredit() + pos.getPeriodCredit())
-                pos.setEndDebit(Math.max(0, pos.getStartDebit() + pos.getPeriodDebit() - pos.getPeriodCredit()));
+                pos.setEndDebit(Math.max(0, pos.getStartDebit() + pos.getPeriodDebit() - pos.getPeriodCredit() - pos.getStartCredit()));
             else
-                pos.setEndCredit(Math.max(0, pos.getStartCredit() + pos.getPeriodCredit() - pos.getPeriodDebit()));
+                pos.setEndCredit(Math.max(0, pos.getStartCredit() + pos.getPeriodCredit() - pos.getPeriodDebit() - pos.getStartDebit()));
         }
 
         double prevTotalsDebit = 0;
