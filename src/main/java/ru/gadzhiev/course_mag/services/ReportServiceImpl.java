@@ -87,7 +87,10 @@ public class ReportServiceImpl implements ReportService {
             if(position.getAccount().code().equals(Account.ACCOUNT_601)
                 || position.getAccount().code().equals(Account.ACCOUNT_602)
                 || position.getAccount().code().equals(Account.ACCOUNT_621)
-                || position.getAccount().code().equals(Account.ACCOUNT_622)) {
+                || position.getAccount().code().equals(Account.ACCOUNT_622)
+                || position.getAccount().code().equals(Account.ACCOUNT_68)
+                || position.getAccount().code().equals(Account.ACCOUNT_69)
+                || position.getAccount().code().equals(Account.ACCOUNT_70)) {
                 debitStart_1230 += position.getStartDebit();
                 debitEnd_1230 += position.getEndDebit();
                 creditStart_1520 += position.getStartCredit();
