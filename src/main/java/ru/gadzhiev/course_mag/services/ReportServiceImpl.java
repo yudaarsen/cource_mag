@@ -116,7 +116,7 @@ public class ReportServiceImpl implements ReportService {
 
         result.add(new BalanceRow("Запасы", 1210,
                 (int)(account_10[0] + account_20[0] + account_43[0]) / 1000,
-                (int)(account_01[2] + account_02[2] + account_43[2]) / 1000));
+                (int)(account_10[2] + account_20[2] + account_43[2]) / 1000));
         result.add(new BalanceRow("НДС по приобретенным ценностям", 1220, 0, 0));
         result.add(new BalanceRow("Дебиторская задолженность", 1230,
                 (int)(debitStart_1230) / 1000,
